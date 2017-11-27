@@ -6,13 +6,14 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not
 	distributed with this file, You can obtain one at
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.11.26
+        Version: 17.11.27
      -- End License block   */
 
 package jcr6main
 
 import (
 	"trickyunits/mkl"
+	"trickyunits/qff"
 )
 
 type TJCR6Entry struct {
@@ -49,9 +50,12 @@ type TJCR6StorageDriver struct {
 var JCR6StorageDrivers = make(map[string]*TJCR6StorageDriver)
 
 func init() {
-	mkl.Version("Tricky's Go Units - jcr6main.go", "17.11.26")
+	mkl.Version("Tricky's Go Units - jcr6main.go", "17.11.27")
 	mkl.Lic("Tricky's Go Units - jcr6main.go", "Mozilla Public License 2.0")
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
+		if !qff.Exists(file) {
+			return false
+		}
 		return true
 	}, func(file string) TJCR6Dir {
 		ret := TJCR6Dir{make(map[string]TJCR6Entry), make(map[string]string)}
