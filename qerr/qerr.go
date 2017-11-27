@@ -1,6 +1,6 @@
 /*
   qerr.go
-
+  
   version: 17.11.27
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
@@ -38,6 +38,6 @@ func QERR(e error) {
 }
 
 func init() {
-	mkl.Version("Tricky's Go Units - qerr.go", "17.11.27")
-	mkl.Lic("Tricky's Go Units - qerr.go", "ZLib License")
+mkl.Version("Tricky's Go Units - qerr.go","17.11.27")
+mkl.Lic    ("Tricky's Go Units - qerr.go","ZLib License")
 }
