@@ -1,6 +1,6 @@
 /*
   qff.go
-
+  
   version: 17.11.27
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
@@ -28,6 +28,14 @@ import (
 	"trickyunits/qstr"
 )
 
+/*
+   I need to note, I ONLY deal in LittleEndian. I always did, even when I was on a PPC based Mac, where BigEndian was the standard.
+   This most of all since I've always worked for multiple platforms, including Windows (where LittleEndian is the standard).
+   I just didn't want conflicts.
+   If you really want to use my package yourself and you need BigEndian, well by all means lemme know, it's only
+   5 minutes or so to implement this. Pushing that to github will very likely take more time :-P
+*/
+
 func Exists(name string) bool {
 	_, err := os.Stat(name)
 	return !os.IsNotExist(err)
@@ -40,18 +48,36 @@ func ReadInt32(f io.Reader) int32 {
 	return ret
 }
 
+func ReadInt64(f io.Reader) int64 {
+	var ret int64 = 0
+	err := binary.Read(f, binary.LittleEndian, &ret)
+	qerr.QERR(err)
+	return ret
+}
+
 func RawReadString(f io.Reader, l int32) string {
-	ret := make(byte[],l)
+	ret := make([]byte, l)
 	f.Read(ret)
 	return qstr.BA2S(ret)
 }
 
-func ReadString(f io.reader) string {
+func ReadString(f io.Reader) string {
 	l := ReadInt32(f)
 	return RawReadString(f, l)
 }
 
+func ReadByte(r io.Reader) byte {
+	buf := make([]byte, 1)
+	_, err := r.Read(buf)
+	qerr.QERR(err)
+	return buf[0]
+}
+
+func Seek(r io.Reader, offs int64) {
+	r.Seek(offs, 0)
+}
+
 func init() {
-	mkl.Version("Tricky's Go Units - qff.go", "17.11.27")
-	mkl.Lic("Tricky's Go Units - qff.go", "ZLib License")
+mkl.Version("Tricky's Go Units - qff.go","17.11.27")
+mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
