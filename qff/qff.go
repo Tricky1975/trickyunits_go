@@ -1,6 +1,6 @@
 /*
   qff.go
-  
+
   version: 17.11.27
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
@@ -48,6 +48,10 @@ func ReadInt32(f io.Reader) int32 {
 	return ret
 }
 
+func ReadInt(f io.Reader) int {
+	return int(ReadInt32(f))
+}
+
 func ReadInt64(f io.Reader) int64 {
 	var ret int64 = 0
 	err := binary.Read(f, binary.LittleEndian, &ret)
@@ -73,11 +77,33 @@ func ReadByte(r io.Reader) byte {
 	return buf[0]
 }
 
-func Seek(r io.Reader, offs int64) {
-	r.Seek(offs, 0)
+func Seek(r os.File, offs int) {
+	r.Seek(int64(offs), 0)
 }
 
+func Pos(file os.File) int {
+	// Find the current position by getting the
+	// return value from Seek after moving 0 bytes
+	currentPosition, err := file.Seek(0, 1)
+	if err != nil {
+		panic(err)
+	}
+	// fmt.Println("Current position:", currentPosition)
+	return int(currentPosition)
+}
+
+func Size(file os.File) int {
+	fi, err := file.Stat()
+	if err != nil {
+		panic(err)
+	}
+	return int(fi.Size())
+}
+
+func EOF(fi os.File) bool {
+	return !(Pos(fi) < Size(fi))
+}
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.11.27")
-mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
+	mkl.Version("Tricky's Go Units - qff.go", "17.11.27")
+	mkl.Lic("Tricky's Go Units - qff.go", "ZLib License")
 }
