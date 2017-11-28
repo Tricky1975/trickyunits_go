@@ -20,31 +20,38 @@ import (
 func init() {
 mkl.Version("Tricky's Go Units - jcr6zlib.go","17.11.28")
 mkl.Lic    ("Tricky's Go Units - jcr6zlib.go","Mozilla Public License 2.0")
-	jzlib := TJCR6StorageDriver{}
-	jzlib.pack = func(b []byte)[]byte{
+	jcr6main.JCR6StorageDrivers["zlib"] = &jcr6main.TJCR6StorageDriver{}
+	jcr6main.JCR6StorageDrivers["zlib"].Pack = func(b []byte)[]byte{
 		var z bytes.Buffer
+		/*
 		bt,err := zlib.NewWriter(&z)
 		if err!=nil{
 			JCR6Error = "ZLIB.PACK: "+err.Error()
 			return make([]byte)
 		}
+		*/
+		bt := zlib.NewWriter(&z)
 		bt.Write(b)
 		bt.Close()
 		return z.Bytes()
 	}
-	jzlib.unpack = func(b []byte)[]byte{
-		var z bytes.Buffer = bytes.NewBuffer(b)
-		r := make([]byte,z.Len())
-		bti, err := zlib.NewReader(&b)
+	jcr6main.JCR6StorageDrivers["zlib"].Unpack = func(b []byte,size int)[]byte{
+		//var z bytes.Buffer = bytes.NewBuffer(b)
+		var r []byte
+		z:= bytes.NewBuffer(b)
+		bti, err := zlib.NewReader(z)
 		if err!=nil{
-			JCR6Error = "ZLIB.UNPACK: "+err.Error()
+			jcr6main.JCR6Error = "ZLIB.UNPACK: "+err.Error()
 			return r
 		}
-		_,err=bti.Read(r)
 		if err!=nil{
-			JCR6Error = "ZLIB.UNPACK: "+err.Error()
+			jcr6main.JCR6Error = "ZLIB.UNPACK: "+err.Error()
 		}
+		//fi, _ := bti.Stat()
+		r = make([]byte,size) //fi.Size())
+		_,err=bti.Read(r)
+		bti.Close()
 		return r
 	}
-	JCR6StorageDrivers["zlib"] = jzlib
+	
 }

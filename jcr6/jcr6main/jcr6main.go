@@ -20,6 +20,7 @@ import (
 	"trickyunits/mkl"
 	"trickyunits/qerr"
 	"trickyunits/qff"
+	"bytes"
 )
 
 var debugchat = true
@@ -70,8 +71,8 @@ type TJCR6Driver struct {
 var JCR6Drivers = make(map[string]*TJCR6Driver)
 
 type TJCR6StorageDriver struct {
-	pack   func(b []byte) []byte
-	unpack func(b []byte) []byte
+	Pack   func(b []byte)          []byte
+	Unpack func(b []byte,size int) []byte
 }
 
 var JCR6StorageDrivers = make(map[string]*TJCR6StorageDriver)
@@ -210,14 +211,35 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 		ret.fatcsize = qff.ReadInt(bt)
 		ret.fatstorage = qff.ReadString(bt)
 		ret.entries = map[string]TJCR6Entry{}
-		for (!qff.EOF(*bt)) && (!theend) {
-			mtag := qff.ReadByte(bt)
+		chats("FAT Compressed Size: %d",ret.fatcsize)
+		chats("FAT True Size:       %d",ret.fatsize)
+		chats("FAT Comp. Algorithm: %s",ret.fatstorage)
+		
+		fatcbytes:=make([]byte,ret.fatcsize)
+		var fatbytes []byte
+		bt.Read(fatcbytes)
+		bt.Close()
+		if _,ok:=JCR6StorageDrivers[ret.fatstorage];!ok{
+			JCR6Error = fmt.Sprintf("There is no driver found for the %s compression algorithm, so I cannot unpack the file table",ret.fatstorage)
+			return ret
+		}
+		fatbytes=JCR6StorageDrivers[ret.fatstorage].Unpack(fatcbytes,ret.fatsize)
+		if len(fatbytes)!=ret.fatsize{
+			fmt.Printf("WARNING!!!\nSize after unpacking does NOT match the size written inside the JCR6 file.\nSize is %d and it must be %d\nErrors can be expected!\n",len(fatbytes),ret.fatsize)
+		}
+		//fatbuffer:=bytes.NewBuffer(fatbytes)
+		btf := bytes.NewReader(fatbytes)
+		qff.DEOF=false
+		for (!qff.DEOF) && (!theend) {
+			mtag := qff.ReadByte(btf)
+			ppp,_ :=btf.Seek(0,1)
+			chats("FAT POSITION %d",ppp)
 			chat(fmt.Sprintf("FAT MAIN TAG %d", mtag))
 			switch mtag {
 			case 0xff:
 				theend = true
 			case 0x01:
-				tag := strings.ToUpper(qff.ReadString(bt))
+				tag := strings.ToUpper(qff.ReadString(btf))
 				chats("FAT TAG %s", tag)
 				switch tag {
 				case "FILE":
@@ -226,23 +248,27 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 					newentry.datastring = map[string]string{}
 					newentry.dataint = map[string]int{}
 					newentry.databool = map[string]bool{}
-					ftag := qff.ReadByte(bt)
-					chats("FILE TAG %d", ftag)
+					ftag := qff.ReadByte(btf)
 					for ftag != 255 {
+						chats("FILE TAG %d", ftag)
 						switch ftag {
 						case 1:
-							k := qff.ReadString(bt)
+							k := qff.ReadString(btf)
 							chats("string key %s", k)
-							v := qff.ReadString(bt)
+							v := qff.ReadString(btf)
 							chats("string value %s", v)
 							newentry.datastring[k] = v
 						case 2:
-							kb := qff.ReadString(bt)
-							vb := qff.ReadByte(bt) > 0
+							kb := qff.ReadString(btf)
+							vb := qff.ReadByte(btf) > 0
+							chats("boolean key %s", kb)
+							chats("boolean value %s",vb)
 							newentry.databool[kb] = vb
 						case 3:
-							ki := qff.ReadString(bt)
-							vi := qff.ReadInt32(bt)
+							ki := qff.ReadString(btf)
+							vi := qff.ReadInt32(btf)
+							chats("integer key %s",ki)
+							chats("integer value %d",vi)
 							newentry.dataint[ki] = int(vi)
 						case 255:
 
@@ -260,7 +286,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 						newentry.notes = newentry.datastring["__notes"]
 						centry := strings.ToUpper(newentry.entry)
 						ret.entries[centry] = newentry
-						ftag = qff.ReadByte(bt)
+						ftag = qff.ReadByte(btf)
 
 					}
 				}
@@ -277,7 +303,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 
 	JCR6StorageDrivers["Store"] = &TJCR6StorageDriver{func(b []byte) []byte {
 		return b
-	}, func(b []byte) []byte {
+	}, func(b []byte,size int) []byte {
 		return b
 	}}
 
