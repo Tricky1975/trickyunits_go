@@ -1,6 +1,7 @@
 *.MKL.ini
 mkl
 MKL_Backup
-.project
 ._*
 .DS_Store
+*.MKL.ini
+
