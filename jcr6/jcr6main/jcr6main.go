@@ -1,12 +1,12 @@
 /*
         jcr6main.go
 	(c) 2017 Jeroen Petrus Broks.
-
-	This Source Code Form is subject to the terms of the
-	Mozilla Public License, v. 2.0. If a copy of the MPL was not
-	distributed with this file, You can obtain one at
+	
+	This Source Code Form is subject to the terms of the 
+	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
+	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.11.27
+        Version: 17.11.28
 */
 /*   -- Start License block
         jcr6main.go
@@ -126,8 +126,8 @@ func Entries(J TJCR6Dir) string {
 }
 
 func init() {
-	mkl.Version("Tricky's Go Units - jcr6main.go", "17.11.27")
-	mkl.Lic("Tricky's Go Units - jcr6main.go", "Mozilla Public License 2.0")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.11.28")
+mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
 			chat("File " + file + " does not exist so it cannot be JCR6!")

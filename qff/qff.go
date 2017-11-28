@@ -1,7 +1,7 @@
 /*
   qff.go
-
-  version: 17.11.27
+  
+  version: 17.11.28
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -104,6 +104,6 @@ func EOF(fi os.File) bool {
 	return !(Pos(fi) < Size(fi))
 }
 func init() {
-	mkl.Version("Tricky's Go Units - qff.go", "17.11.27")
-	mkl.Lic("Tricky's Go Units - qff.go", "ZLib License")
+mkl.Version("Tricky's Go Units - qff.go","17.11.28")
+mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
