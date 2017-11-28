@@ -36,6 +36,8 @@ import (
    5 minutes or so to implement this. Pushing that to github will very likely take more time :-P
 */
 
+var DEOF bool = false
+
 func Exists(name string) bool {
 	_, err := os.Stat(name)
 	return !os.IsNotExist(err)
@@ -44,6 +46,7 @@ func Exists(name string) bool {
 func ReadInt32(f io.Reader) int32 {
 	var ret int32 = 0
 	err := binary.Read(f, binary.LittleEndian, &ret)
+	DEOF = err == io.EOF
 	qerr.QERR(err)
 	return ret
 }
@@ -56,12 +59,14 @@ func ReadInt64(f io.Reader) int64 {
 	var ret int64 = 0
 	err := binary.Read(f, binary.LittleEndian, &ret)
 	qerr.QERR(err)
+	DEOF = err == io.EOF
 	return ret
 }
 
 func RawReadString(f io.Reader, l int32) string {
 	ret := make([]byte, l)
-	f.Read(ret)
+	_, err := f.Read(ret)
+	DEOF = err == io.EOF
 	return qstr.BA2S(ret)
 }
 
@@ -73,6 +78,7 @@ func ReadString(f io.Reader) string {
 func ReadByte(r io.Reader) byte {
 	buf := make([]byte, 1)
 	_, err := r.Read(buf)
+	DEOF = err == io.EOF
 	qerr.QERR(err)
 	return buf[0]
 }
@@ -100,6 +106,9 @@ func Size(file os.File) int {
 	return int(fi.Size())
 }
 
+// the function of this one is trivial at best
+// Go does (for some reasons far beyond anybody who thinks logicall) not support a NORMAL way of EOF detection or languages do, but has a pretty fucked up way of doing this.
+// DEOF can help a little, I hope...
 func EOF(fi os.File) bool {
 	return !(Pos(fi) < Size(fi))
 }

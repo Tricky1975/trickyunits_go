@@ -7,6 +7,111 @@
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
         Version: 17.11.28
+*/ /*   -- Start License block
+        jcr6main.go
+	(c) 2017 Jeroen Petrus Broks.
+
+	This Source Code Form is subject to the terms of the
+	Mozilla Public License, v. 2.0. If a copy of the MPL was not
+	distributed with this file, You can obtain one at
+	http://mozilla.org/MPL/2.0/.
+        Version: 17.11.27
+     -- End License block   
+*/
+
+package jcr6main
+
+import (
+	//"io/ioutil"
+	"fmt"
+	_ "io"
+	"os"
+	"strings"
+	"trickyunits/mkl"
+	"trickyunits/qerr"
+	"trickyunits/qff"
+)
+
+var debugchat = true
+
+func chat(s string) {
+	if debugchat {
+		fmt.Println(s)
+	}
+}
+
+func chats(f string, a ...interface{}) {
+	chat(fmt.Sprintf(f, a))
+}
+
+type TJCR6Entry struct {
+	entry          string
+	mainfile       string
+	offset         int
+	size           int
+	compressedsize int
+	storage        string
+	author         string
+	notes          string
+	attrib         int
+	datastring     map[string]string
+	dataint        map[string]int
+	databool       map[string]bool
+}
+
+type TJCR6Dir struct {
+	entries    map[string]TJCR6Entry
+	comments   map[string]string
+	cfgint     map[string]int32
+	cfgbool    map[string]bool
+	cfgstr     map[string]string
+	fatoffset  int32
+	fatsize    int
+	fatcsize   int
+	fatstorage string
+}
+
+type TJCR6Driver struct {
+	drvname   string
+	recognize func(file string) bool
+	dir       func(file string) TJCR6Dir
+}
+
+var JCR6Drivers = make(map[string]*TJCR6Driver)
+
+type TJCR6StorageDriver struct {
+	pack   func(b []byte) []byte
+	unpack func(b []byte) []byte
+}
+
+var JCR6StorageDrivers = make(map[string]*TJCR6StorageDriver)
+var JCR6Error string = ""
+
+// Returns the name of the recognized file type.
+// If none are recognized it will return NONE
+func Recognize(file string) string {
+	ret := "NONE"
+	for k, v := range JCR6Drivers {
+		chat("Is " + file + " of type " + k + "?")
+		//fmt.Printf("key[%s] value[%s]\n", k, v)
+		if v.recognize(file) {
+			ret = k
+		}
+	}
+	return ret
+}
+
+func Dir(file string) TJCR6Dir {
+	t := Recognize(file)
+	return JCR6Drivers[t].dir(file)
+}
+
+/*
+func JOpen(d TJCR6Dir, entry string) io.Reader {
+	chat("Opening: " + entry)
+
+}
+
 */
 
 func Entries(J TJCR6Dir) string {
