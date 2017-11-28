@@ -116,6 +116,47 @@ func Entries(J TJCR6Dir) string {
 	return ret
 }
 
+var JCR6Crash bool = true
+
+func jcr6err(em string, p ...interface{}){
+	fem:=fmt.Sprintf(em,p)
+	fmt.Println("JCR6 Error")
+	fmt.Println(fem)
+	if JCR6Crash {
+		os.Exit(1)
+	} else {
+		JCR6Error = fem
+	}
+}
+
+func JCR_B(j TJCR6Dir,entry string) []byte {
+	en := strings.ToUpper(entry)
+	//var e TJCR6Entry
+	if _,ok:= j.entries[en]; !ok{
+		jcr6err("Entry %s was not found in the requested resource.",entry)
+	}
+	e  := j.entries[en]
+	pb := make([]byte,e.compressedsize); 
+	bt,err := os.Open(e.mainfile)
+	if err!=nil {
+		jcr6err("Error while opening resource file: %s",e.mainfile)
+		return make([]byte,2)
+	}
+	bt.Seek(int64(e.offset),0)
+	bt.Read(pb)
+	var ub []byte
+	if stdrv,ok:=JCR6StorageDrivers[e.storage];ok{
+		ub = stdrv.Unpack(pb,e.size)
+	} else {
+		jcr6err("Tried to read %s from %s, but the storage algorithm %s does not exist!",entry,e.mainfile,e.storage)
+	}
+	return ub
+}
+
+func JCR_String(j TJCR6Dir,entry string) string {
+	return string(JCR_B(j),entry)
+}
+
 func init() {
 mkl.Version("Tricky's Go Units - jcr6main.go","17.11.28")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
