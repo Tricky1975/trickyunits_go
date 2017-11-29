@@ -1,7 +1,7 @@
-/*   -- Start License block
+/*
   mkl.go
   
-  version: 17.11.26
+  version: 17.11.29
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -16,8 +16,14 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-     -- End License block   */
+*/
+
 package mkl
+import (
+	"strconv"
+	"strings"
+)
+
 var mkl_versions = make(map[string]string)
 var mkl_licenses = make(map[string]string)
 
@@ -41,13 +47,27 @@ func ListAll() string {
 }
 
 
+func Newest() string{
+	ret:=""
+	high:=0
+	for _, v := range mkl_versions { 
+		a:=strings.Split(v,".")
+		i,_:=strconv.Atoi(a[0]+a[1]+a[2])
+		if i>high {
+			high=i
+			ret=v
+		}
+	}
+	return ret
+}
 
-/*
-mkl.Version("Tricky's Go Units - mkl.go","17.11.26")
+
+/* --
+mkl.Version("Tricky's Go Units - mkl.go","17.11.29")
 mkl.Lic    ("Tricky's Go Units - mkl.go","ZLib License")
-*/
+-- */
 
 func init(){
-  Version("Tricky's Go Units - mkl.go","17.11.26")
+  Version("Tricky's Go Units - mkl.go","17.11.29")
   Lic    ("Tricky's Go Units - mkl.go","ZLib License")
 }
