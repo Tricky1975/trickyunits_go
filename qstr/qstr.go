@@ -48,7 +48,7 @@ func Val(s string) int {
 	if e!=nil {
 		r=0
 	}
-	return 0
+	return r
 }
 
 func init(){
