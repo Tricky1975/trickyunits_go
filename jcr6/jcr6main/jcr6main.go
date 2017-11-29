@@ -21,9 +21,10 @@ import (
 	"trickyunits/qerr"
 	"trickyunits/qff"
 	"bytes"
+	"sort"
 )
 
-var debugchat = true
+var debugchat = false
 
 func chat(s string) {
 	if debugchat {
@@ -36,18 +37,18 @@ func chats(f string, a ...interface{}) {
 }
 
 type TJCR6Entry struct {
-	entry          string
-	mainfile       string
-	offset         int
-	size           int
-	compressedsize int
-	storage        string
-	author         string
-	notes          string
-	attrib         int
-	datastring     map[string]string
-	dataint        map[string]int
-	databool       map[string]bool
+	Entry          string
+	Mainfile       string
+	Offset         int
+	Size           int
+	Compressedsize int
+	Storage        string
+	Author         string
+	Notes          string
+	Attrib         int
+	Datastring     map[string]string
+	Dataint        map[string]int
+	Databool       map[string]bool
 }
 
 type TJCR6Dir struct {
@@ -111,7 +112,23 @@ func Entries(J TJCR6Dir) string {
 		if ret != "" {
 			ret += "\n"
 		}
-		ret += v.entry
+		ret += v.Entry
+	}
+	return ret
+}
+
+func EntryList(J TJCR6Dir) []string{
+	r:= strings.Split(Entries(J),"\n")
+	sort.Strings(r)
+	return r
+}
+
+func Entry(J TJCR6Dir,entry string) TJCR6Entry{
+	var ret TJCR6Entry
+	var ok bool
+	JCR6Error = ""
+	if ret,ok=J.entries[strings.ToUpper(entry)];!ok{
+		JCR6Error = "Non-existent entry: "+entry
 	}
 	return ret
 }
@@ -136,19 +153,19 @@ func JCR_B(j TJCR6Dir,entry string) []byte {
 		jcr6err("Entry %s was not found in the requested resource.",entry)
 	}
 	e  := j.entries[en]
-	pb := make([]byte,e.compressedsize); 
-	bt,err := os.Open(e.mainfile)
+	pb := make([]byte,e.Compressedsize); 
+	bt,err := os.Open(e.Mainfile)
 	if err!=nil {
-		jcr6err("Error while opening resource file: %s",e.mainfile)
+		jcr6err("Error while opening resource file: %s",e.Mainfile)
 		return make([]byte,2)
 	}
-	bt.Seek(int64(e.offset),0)
+	bt.Seek(int64(e.Offset),0)
 	bt.Read(pb)
 	var ub []byte
-	if stdrv,ok:=JCR6StorageDrivers[e.storage];ok{
-		ub = stdrv.Unpack(pb,e.size)
+	if stdrv,ok:=JCR6StorageDrivers[e.Storage];ok{
+		ub = stdrv.Unpack(pb,e.Size)
 	} else {
-		jcr6err("Tried to read %s from %s, but the storage algorithm %s does not exist!",entry,e.mainfile,e.storage)
+		jcr6err("Tried to read %s from %s, but the storage algorithm %s does not exist!",entry,e.Mainfile,e.Storage)
 	}
 	return ub
 }
@@ -290,10 +307,10 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 				switch tag {
 				case "FILE":
 					newentry := TJCR6Entry{}
-					newentry.mainfile = file
-					newentry.datastring = map[string]string{}
-					newentry.dataint = map[string]int{}
-					newentry.databool = map[string]bool{}
+					newentry.Mainfile = file
+					newentry.Datastring = map[string]string{}
+					newentry.Dataint = map[string]int{}
+					newentry.Databool = map[string]bool{}
 					ftag := qff.ReadByte(btf)
 					for ftag != 255 {
 						chats("FILE TAG %d", ftag)
@@ -303,19 +320,19 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 							chats("string key %s", k)
 							v := qff.ReadString(btf)
 							chats("string value %s", v)
-							newentry.datastring[k] = v
+							newentry.Datastring[k] = v
 						case 2:
 							kb := qff.ReadString(btf)
 							vb := qff.ReadByte(btf) > 0
 							chats("boolean key %s", kb)
 							chats("boolean value %s",vb)
-							newentry.databool[kb] = vb
+							newentry.Databool[kb] = vb
 						case 3:
 							ki := qff.ReadString(btf)
 							vi := qff.ReadInt32(btf)
 							chats("integer key %s",ki)
 							chats("integer value %d",vi)
-							newentry.dataint[ki] = int(vi)
+							newentry.Dataint[ki] = int(vi)
 						case 255:
 
 						default:
@@ -323,14 +340,14 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 							bt.Close()
 							return ret
 						}
-						newentry.entry = newentry.datastring["__Entry"]
-						newentry.size = newentry.dataint["__Size"]
-						newentry.compressedsize = newentry.dataint["__CSize"]
-						newentry.offset = newentry.dataint["__Offset"]
-						newentry.storage = newentry.datastring["__Storage"]
-						newentry.author = newentry.datastring["__Author"]
-						newentry.notes = newentry.datastring["__notes"]
-						centry := strings.ToUpper(newentry.entry)
+						newentry.Entry = newentry.Datastring["__Entry"]
+						newentry.Size = newentry.Dataint["__Size"]
+						newentry.Compressedsize = newentry.Dataint["__CSize"]
+						newentry.Offset = newentry.Dataint["__Offset"]
+						newentry.Storage = newentry.Datastring["__Storage"]
+						newentry.Author = newentry.Datastring["__Author"]
+						newentry.Notes = newentry.Datastring["__notes"]
+						centry := strings.ToUpper(newentry.Entry)
 						ret.entries[centry] = newentry
 						ftag = qff.ReadByte(btf)
 
