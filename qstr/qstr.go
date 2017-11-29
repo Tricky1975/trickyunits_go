@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.11.27
+  version: 17.11.29
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,6 +19,12 @@
 */
 package qstr
 
+import(
+    "trickyunits/mkl"
+    "strconv"
+    )
+    
+
 // This function was set up by PeterSO on StackOverflow
 // https://stackoverflow.com/questions/14230145/what-is-the-best-way-to-convert-byte-array-to-string
 func CToGoString(c []byte) string {
@@ -35,4 +41,17 @@ func CToGoString(c []byte) string {
 // Quicker way :P
 func BA2S(c []byte) string {
 	return CToGoString(c[:])
+}
+
+func Val(s string) int {
+	r,e:=strconv.Atoi(s)
+	if e!=nil {
+		r=0
+	}
+	return 0
+}
+
+func init(){
+mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
+mkl.Version("Tricky's Go Units - qstr.go","17.11.29")
 }
