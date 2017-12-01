@@ -35,11 +35,8 @@ package ansistring
  * This can cause conflicts in this translation, but I hope not.
  * 
  * The bbdoc: and about: blocks are for BlitzMax's automated 
- * documentation builder. Since Go doesn't have a similar system
- * they do appear useless ehre, however I left them in for code's 
- * documentation's sake.
- * Since you are reading this I guess you do know how to read code
- * and code comments :P
+ * documentation builder. I'm not quite sure how GoDoc will respond to 
+ * this, but I'll keep it here for documentation's sake ;)
  * 
  */
 
@@ -68,6 +65,7 @@ mkl.Lic    ("Tricky's Go Units - ansistring.go","ZLib License")
 		ANSI_Use = false 
 	}
 	// I know I should have created a file suffixed with _windows.go for this, however, it's impossible to tell in which order all files are being compiled, so this was the most safe road to go.
+	// I also couldn't find an "anything but windows" kind of compilation.
 }
 
 
@@ -98,7 +96,7 @@ func String(d1,d2,d3,s string) string{
 	} else {
 		return s
 	}
-} func
+} //func
 
 	
 /*Rem
@@ -106,19 +104,19 @@ bbdoc: Basic color string
 about: You can use A_Black, A_Red, A_Green, A_Yellow, A_Blue,A_Magenta,A_Cyan or A_White for color values and A_Norm, A_Bright, A_Dark, A_Underline, A_Blink for flags
 returns: The worked out string
 */	
-func Col$( S string, c1 int, c2 int, flags int)
+func Col( S string, c1 int, c2 int, flags int) string{
 	return ANSI_String(flags,c1+30,C2+40,s)
-} func
+} //func
 
 
 /*Rem
 bbdoc: Print with only one color
 returns: The worked out string
 */
-func SCol$(s string,col,flags)
+func SCol(s string,col int,flags int)string{
 	if ANSI_Use{
 		return fmt.Sprintf("\x1b[%d,%dm$m\x1b[0m",flags,col,s)   // "\x1b["+flags+";"+Int(col+30)+"m"+s+Chr(27)+"[0m"
 	} else {
 		return s
 	}
-} func
+} //func

@@ -36,6 +36,8 @@ func chats(f string, a ...interface{}) {
 	chat(fmt.Sprintf(f, a))
 }
 
+
+// Used to store the information of a JCR6 entry
 type TJCR6Entry struct {
 	Entry          string
 	Mainfile       string
@@ -51,6 +53,7 @@ type TJCR6Entry struct {
 	Databool       map[string]bool
 }
 
+// Used to store the directory inside a JCR6 resource (all patches included)
 type TJCR6Dir struct {
 	entries    map[string]TJCR6Entry
 	comments   map[string]string
@@ -63,14 +66,21 @@ type TJCR6Dir struct {
 	fatstorage string
 }
 
+// Used to create a driver to make JCR6 recognize other files.
+// Only for users who KNOW what they are doring!
 type TJCR6Driver struct {
-	drvname   string
-	recognize func(file string) bool
-	dir       func(file string) TJCR6Dir
+	Drvname   string
+	Recognize func(file string) bool
+	Dir       func(file string) TJCR6Dir
 }
 
+// Used to store all drivers
+// Only for users who KNOW what they are doring!
 var JCR6Drivers = make(map[string]*TJCR6Driver)
 
+// Used to store all compression methods.
+// "Store" is there by default
+// Only for users who KNOW what they are doring!
 type TJCR6StorageDriver struct {
 	Pack   func(b []byte)          []byte
 	Unpack func(b []byte,size int) []byte
@@ -93,19 +103,15 @@ func Recognize(file string) string {
 	return ret
 }
 
+// Returns the directory of a JCR6 file or a file recognised as such
 func Dir(file string) TJCR6Dir {
 	t := Recognize(file)
 	return JCR6Drivers[t].dir(file)
 }
 
-/*
-func JOpen(d TJCR6Dir, entry string) io.Reader {
-	chat("Opening: " + entry)
 
-}
-
-*/
-
+// Returns a string with all entries inside a JCR6 file 
+// The order can be pretty random.
 func Entries(J TJCR6Dir) string {
 	ret := ""
 	for _, v := range J.entries {
@@ -117,12 +123,15 @@ func Entries(J TJCR6Dir) string {
 	return ret
 }
 
+// Returns a list of all entries inside a JCR file as an array.
+// The files are sorted by alphabet
 func EntryList(J TJCR6Dir) []string{
 	r:= strings.Split(Entries(J),"\n")
 	sort.Strings(r)
 	return r
 }
 
+// Entry information (for advanced users).
 func Entry(J TJCR6Dir,entry string) TJCR6Entry{
 	var ret TJCR6Entry
 	var ok bool
@@ -133,6 +142,9 @@ func Entry(J TJCR6Dir,entry string) TJCR6Entry{
 	return ret
 }
 
+// Will crash out your program with exit code 1 if an error occurs.
+// If you do not want that to happen, set this to false.
+// jcr6main.JCR6Crash = false in your own code will do.
 var JCR6Crash bool = true
 
 func jcr6err(em string, p ...interface{}){
@@ -146,6 +158,9 @@ func jcr6err(em string, p ...interface{}){
 	}
 }
 
+// Retreives all content of a JCR6 entry and unpacks it by the
+// required algorithm (if the driver for that algorithm is loaded
+// by your program that is. :P
 func JCR_B(j TJCR6Dir,entry string) []byte {
 	en := strings.ToUpper(entry)
 	//var e TJCR6Entry
@@ -170,10 +185,15 @@ func JCR_B(j TJCR6Dir,entry string) []byte {
 	return ub
 }
 
+// Basically the same as JCR_B, but now returns all data as one big string
 func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
 }
 
+
+// Gives the content of a text files line by line.
+// Please note, this function has only been set up for the unix "\n" 
+// based text files and therefore it will very likely be faulty on Windows.
 func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 	r:=strings.Split(JCR_String(j,entry),"\n")
 	return r
