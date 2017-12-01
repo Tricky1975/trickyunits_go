@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.11.29
+  version: 17.12.01
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -52,15 +52,15 @@ func Val(s string) int {
 }
 
 func SubStr(a string,pos,length int) string{
-	runes := []rune(value)
+	runes := []rune(a)
 	endpos:=pos+length
-	safeSubstring := string(runes[pos:length])
+	safeSubstring := string(runes[pos:endpos])
 	return safeSubstring
 }
 
 // Whoohoo, let's do it the BASIC way :P
 func Mid(a string,pos,length int) string{
-	return substr(a,pos-1,length)
+	return SubStr(a,pos-1,length)
 }
 
 func Left(a string,l int) string{
@@ -71,8 +71,49 @@ func Right(a string,l int) string{
 	return SubStr(a,len(a)-l,l)
 }
 
+// returns -1 if not found at all, otherwise the position number
+func FindLast(a string,s string) int{
+	for f:=len(a)-len(s);f>0;f--{
+		if Mid(a,f,len(s))==s{
+			return f
+		}
+	}
+	return -1
+}
+
+// Always normal slashes even in Windows file names!
+func Slash(s string) string{
+	return strings.Replace(s,"\\","/",-1)
+}
+
+// strips the extention of a filename.
+// Please note, 
+func StripExt(file string) string{
+	f :=Slash(file)
+	lp:=FindLast(f,".")
+	ls:=FindLast(f,"/")
+	if lp<=1 || ls>lp || lp==ls+1 {
+		return f
+	}
+	return Left(f,lp-1)
+}
+
+func StripDir(file string) string{
+	f :=Slash(file)
+	ls:=FindLast(f,"/")
+	if ls==-1{
+		return f
+	}
+	return Right(f,len(f)-ls)
+
+}
+
+
+func StripAll(file string) string{
+	return StripDir(StripExt(file))
+}
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.11.29")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.01")
 }
