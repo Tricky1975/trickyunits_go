@@ -51,6 +51,27 @@ func Val(s string) int {
 	return r
 }
 
+func SubStr(a string,pos,length int) string{
+	runes := []rune(value)
+	endpos:=pos+length
+	safeSubstring := string(runes[pos:length])
+	return safeSubstring
+}
+
+// Whoohoo, let's do it the BASIC way :P
+func Mid(a string,pos,length int) string{
+	return substr(a,pos-1,length)
+}
+
+func Left(a string,l int) string{
+	return SubStr(a,0,l)
+}
+
+func Right(a string,l int) string{
+	return SubStr(a,len(a)-l,l)
+}
+
+
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
 mkl.Version("Tricky's Go Units - qstr.go","17.11.29")
