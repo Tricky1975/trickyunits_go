@@ -1,5 +1,4 @@
 *.MKL.ini
-mkl
 MKL_Backup
 ._*
 .DS_Store
