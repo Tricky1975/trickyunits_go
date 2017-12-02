@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.12.01
+  version: 17.12.02
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,7 @@ package qstr
 import(
     "trickyunits/mkl"
     "strconv"
+    "strings"
     )
     
 
@@ -108,12 +109,11 @@ func StripDir(file string) string{
 
 }
 
-
 func StripAll(file string) string{
 	return StripDir(StripExt(file))
 }
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.01")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.02")
 }

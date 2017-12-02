@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.01
+        Version: 17.12.02
 */
 
 package jcr6main
@@ -96,7 +96,7 @@ func Recognize(file string) string {
 	for k, v := range JCR6Drivers {
 		chat("Is " + file + " of type " + k + "?")
 		//fmt.Printf("key[%s] value[%s]\n", k, v)
-		if v.recognize(file) {
+		if v.Recognize(file) {
 			ret = k
 		}
 	}
@@ -106,7 +106,7 @@ func Recognize(file string) string {
 // Returns the directory of a JCR6 file or a file recognised as such
 func Dir(file string) TJCR6Dir {
 	t := Recognize(file)
-	return JCR6Drivers[t].dir(file)
+	return JCR6Drivers[t].Dir(file)
 }
 
 
@@ -200,7 +200,7 @@ func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.01")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.02")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
