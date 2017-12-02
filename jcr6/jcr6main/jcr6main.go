@@ -118,8 +118,11 @@ func Entries(J TJCR6Dir) string {
 		if ret != "" {
 			ret += "\n"
 		}
-		ret += v.Entry
+		if v.Entry!=""{
+			ret += v.Entry
+		}
 	}
+	// fmt.Printf("returning \"%s\"",ret) // << Debug
 	return ret
 }
 
@@ -360,18 +363,19 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 							bt.Close()
 							return ret
 						}
-						newentry.Entry = newentry.Datastring["__Entry"]
-						newentry.Size = newentry.Dataint["__Size"]
-						newentry.Compressedsize = newentry.Dataint["__CSize"]
-						newentry.Offset = newentry.Dataint["__Offset"]
-						newentry.Storage = newentry.Datastring["__Storage"]
-						newentry.Author = newentry.Datastring["__Author"]
-						newentry.Notes = newentry.Datastring["__notes"]
-						centry := strings.ToUpper(newentry.Entry)
-						ret.entries[centry] = newentry
 						ftag = qff.ReadByte(btf)
-
 					}
+					newentry.Entry = newentry.Datastring["__Entry"]
+					newentry.Size = newentry.Dataint["__Size"]
+					newentry.Compressedsize = newentry.Dataint["__CSize"]
+					newentry.Offset = newentry.Dataint["__Offset"]
+					newentry.Storage = newentry.Datastring["__Storage"]
+					newentry.Author = newentry.Datastring["__Author"]
+					newentry.Notes = newentry.Datastring["__notes"]
+					centry := strings.ToUpper(newentry.Entry)
+					//fmt.Println("Adding entry: ",centry) // <- Debug
+					ret.entries[centry] = newentry
+					
 				}
 			default:
 				JCR6Error = fmt.Sprintf("Unknown main tag %d", mtag)
