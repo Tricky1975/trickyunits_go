@@ -1,7 +1,7 @@
 /*
   mkl.go
   
-  version: 17.11.29
+  version: 17.12.02
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,7 @@ package mkl
 import (
 	"strconv"
 	"strings"
+	"sort"
 )
 
 var mkl_versions = make(map[string]string)
@@ -37,9 +38,20 @@ func Lic(n string,l string){
 
 func ListAll() string {
    ret:=""
-   for k, v := range mkl_versions { 
-       //fmt.Printf("key[%s] value[%s]\n", k, v)
-       ret += k + " ... " + v + " "
+	// sort
+	mk := make([]string, len(mkl_versions))
+	i := 0
+	for k, _ := range mkl_versions { 
+		mk[i]=k
+		i++
+	}
+	sort.Strings(mk)
+	//list it
+	for ak:=0;ak<len(mk);ak++{
+		k :=mk[ak]
+		vl:=mkl_versions[k]
+		//fmt.Printf("key[%s] value[%s]\n", k, v)
+       ret += k + " ... " + vl + " "
        ret += mkl_licenses[k]
        ret += "\n"
    }
@@ -52,10 +64,12 @@ func Newest() string{
 	high:=0
 	for _, v := range mkl_versions { 
 		a:=strings.Split(v,".")
-		i,_:=strconv.Atoi(a[0]+a[1]+a[2])
-		if i>high {
-			high=i
-			ret=v
+		if len(a)>=3{
+			i,_:=strconv.Atoi(a[0]+a[1]+a[2])
+			if i>high {
+				high=i
+				ret=v
+			}
 		}
 	}
 	return ret
@@ -63,7 +77,7 @@ func Newest() string{
 
 
 /* --
-mkl.Version("Tricky's Go Units - mkl.go","17.11.29")
+mkl.Version("Tricky's Go Units - mkl.go","17.12.02")
 mkl.Lic    ("Tricky's Go Units - mkl.go","ZLib License")
 -- */
 
