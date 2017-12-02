@@ -116,8 +116,8 @@ func EOF(fi os.File) bool {
 
 // You want to go all the sh.... Go puts us through just to get the filesize?
 // NAAH! This routine will do that quickly :P
-func FileSize(file string) int {
-     file, err := os.Open(file)
+func FileSize(filename string) int {
+     file, err := os.Open(filename)
      if err != nil {
          // handle the error here
          return -1
@@ -128,7 +128,7 @@ func FileSize(file string) int {
      if err != nil {
        return -2
      }
-     return stat.Size()
+     return int(stat.Size())
 }
 
 func IsDir(filename string) bool {
