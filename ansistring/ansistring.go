@@ -92,7 +92,11 @@ returns: The asked string
 */
 func AString(d1,d2,d3 int,s string) string{
 	if ANSI_Use{
-		return fmt.Sprintf("\x1b[%d;%d;%dm%s\x1b[0m",d1,d2,d3,s) //"\x1b["+d1+";"+d2+";"+d3+"m"+s+Chr(27)+"[0m"
+		//return fmt.Sprintf("\x1b[%d;%d;%d%s%s\x1b[0m",d1,d2,d3,"m",s) //"\x1b["+d1+";"+d2+";"+d3+"m"+s+Chr(27)+"[0m"
+		ret:="\x1b"
+		ret = ret + fmt.Sprintf("%d;%d;%d",d1,d2,d3)
+		ret = ret + fmt.Sprintf("m%s\x1b[0m")
+		return ret
 	} else {
 		return s
 	}
@@ -115,7 +119,12 @@ returns: The worked out string
 */
 func SCol(s string,col int,flags int)string{
 	if ANSI_Use{
-		return fmt.Sprintf("\x1b[%d,%dm$m\x1b[0m",flags,col,s)   // "\x1b["+flags+";"+Int(col+30)+"m"+s+Chr(27)+"[0m"
+		//return fmt.Sprintf("\x1b[%d,%dm$m\x1b[0m",flags,col,s)   // "\x1b["+flags+";"+Int(col+30)+"m"+s+Chr(27)+"[0m"
+		ret := "\x1b["
+		ret = ret + fmt.Sprintf("%d;%d",flags,col+30)
+		ret = ret + "m"+s
+		ret = ret + "\x1b[0m"
+		return ret
 	} else {
 		return s
 	}
