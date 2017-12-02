@@ -55,15 +55,15 @@ type TJCR6Entry struct {
 
 // Used to store the directory inside a JCR6 resource (all patches included)
 type TJCR6Dir struct {
-	entries    map[string]TJCR6Entry
-	comments   map[string]string
-	cfgint     map[string]int32
-	cfgbool    map[string]bool
-	cfgstr     map[string]string
-	fatoffset  int32
-	fatsize    int
-	fatcsize   int
-	fatstorage string
+	Entries    map[string]TJCR6Entry
+	Comments   map[string]string
+	CFGint     map[string]int32
+	CFGbool    map[string]bool
+	CFGstr     map[string]string
+	FAToffset  int32
+	FATsize    int
+	FATcsize   int
+	FATstorage string
 }
 
 // Used to create a driver to make JCR6 recognize other files.
@@ -114,7 +114,7 @@ func Dir(file string) TJCR6Dir {
 // The order can be pretty random.
 func Entries(J TJCR6Dir) string {
 	ret := ""
-	for _, v := range J.entries {
+	for _, v := range J.Entries {
 		if ret != "" {
 			ret += "\n"
 		}
@@ -139,7 +139,7 @@ func Entry(J TJCR6Dir,entry string) TJCR6Entry{
 	var ret TJCR6Entry
 	var ok bool
 	JCR6Error = ""
-	if ret,ok=J.entries[strings.ToUpper(entry)];!ok{
+	if ret,ok=J.Entries[strings.ToUpper(entry)];!ok{
 		JCR6Error = "Non-existent entry: "+entry
 	}
 	return ret
@@ -167,10 +167,10 @@ func jcr6err(em string, p ...interface{}){
 func JCR_B(j TJCR6Dir,entry string) []byte {
 	en := strings.ToUpper(entry)
 	//var e TJCR6Entry
-	if _,ok:= j.entries[en]; !ok{
+	if _,ok:= j.Entries[en]; !ok{
 		jcr6err("Entry %s was not found in the requested resource.",entry)
 	}
-	e  := j.entries[en]
+	e  := j.Entries[en]
 	pb := make([]byte,e.Compressedsize); 
 	bt,err := os.Open(e.Mainfile)
 	if err!=nil {
@@ -245,34 +245,34 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	}, func(file string) TJCR6Dir {
 		JCR6Error = ""
 		ret := TJCR6Dir{} //make(map[string]TJCR6Entry), make(map[string]string), make(map[string]int32), make(map[string]bool), make(map[string]string), 0, 0, 0, "Store"}
-		ret.cfgbool = map[string]bool{}
-		ret.cfgint = map[string]int32{}
-		ret.cfgstr = map[string]string{}
+		ret.CFGbool = map[string]bool{}
+		ret.CFGint = map[string]int32{}
+		ret.CFGstr = map[string]string{}
 		bt, e := os.Open(file)
 		qerr.QERR(e)
 		if qff.RawReadString(bt, 5) != "JCR6\x1a" {
 			panic("YIKES!!! A NONE JCR6 FILE!!!! HELP! HELP! I'M DYING!!!")
 		}
-		ret.fatoffset = qff.ReadInt32(bt)
-		if ret.fatoffset <= 0 {
+		ret.FAToffset = qff.ReadInt32(bt)
+		if ret.FAToffset <= 0 {
 			JCR6Error = "Invalid FAT offset. Maybe you are trying to read a JCR6 file that has never been properly finalized"
 			bt.Close()
 			return ret
 		}
-		chat(fmt.Sprintf("FAT Offest %i", ret.fatoffset))
+		chat(fmt.Sprintf("FAT Offest %i", ret.FAToffset))
 		var TTag byte
 		var Tag string
 		TTag = qff.ReadByte(bt)
 		for TTag != 255 {
 			Tag = qff.ReadString(bt)
-			chat(fmt.Sprintf("cfgtag %i/%s", TTag, Tag))
+			chat(fmt.Sprintf("CFGtag %i/%s", TTag, Tag))
 			switch TTag {
 			case 1:
-				ret.cfgstr[Tag] = qff.ReadString(bt)
+				ret.CFGstr[Tag] = qff.ReadString(bt)
 			case 2:
-				ret.cfgbool[Tag] = qff.ReadByte(bt) == 1
+				ret.CFGbool[Tag] = qff.ReadByte(bt) == 1
 			case 3:
-				ret.cfgint[Tag] = qff.ReadInt32(bt)
+				ret.CFGint[Tag] = qff.ReadInt32(bt)
 			case 255:
 			default:
 				JCR6Error = "Invalid config tag"
@@ -281,37 +281,37 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 			}
 			TTag = qff.ReadByte(bt)
 		}
-		if ret.cfgbool["_CaseSensitive"] {
+		if ret.CFGbool["_CaseSensitive"] {
 			JCR6Error = "Case Sensitive dir support was already deprecated and removed from JCR6 before it went to the Go language. It's only obvious that support for this was never implemented in Go in the first place."
 			bt.Close()
 			return ret
 		}
 		chat("Reading FAT")
-		chats("Seeking at: %d", ret.fatoffset)
-		qff.Seek(*bt, int(ret.fatoffset))
+		chats("Seeking at: %d", ret.FAToffset)
+		qff.Seek(*bt, int(ret.FAToffset))
 		chats("Positioned at: %i of %d", qff.Pos(*bt), qff.Size(*bt))
 		theend := false
 		chats("The End: %s", theend)
 		chats("EOF:     %s", qff.EOF(*bt))
-		ret.fatsize = qff.ReadInt(bt)
-		ret.fatcsize = qff.ReadInt(bt)
-		ret.fatstorage = qff.ReadString(bt)
-		ret.entries = map[string]TJCR6Entry{}
-		chats("FAT Compressed Size: %d",ret.fatcsize)
-		chats("FAT True Size:       %d",ret.fatsize)
-		chats("FAT Comp. Algorithm: %s",ret.fatstorage)
+		ret.FATsize = qff.ReadInt(bt)
+		ret.FATcsize = qff.ReadInt(bt)
+		ret.FATstorage = qff.ReadString(bt)
+		ret.Entries = map[string]TJCR6Entry{}
+		chats("FAT Compressed Size: %d",ret.FATcsize)
+		chats("FAT True Size:       %d",ret.FATsize)
+		chats("FAT Comp. Algorithm: %s",ret.FATstorage)
 		
-		fatcbytes:=make([]byte,ret.fatcsize)
+		fatcbytes:=make([]byte,ret.FATcsize)
 		var fatbytes []byte
 		bt.Read(fatcbytes)
 		bt.Close()
-		if _,ok:=JCR6StorageDrivers[ret.fatstorage];!ok{
-			JCR6Error = fmt.Sprintf("There is no driver found for the %s compression algorithm, so I cannot unpack the file table",ret.fatstorage)
+		if _,ok:=JCR6StorageDrivers[ret.FATstorage];!ok{
+			JCR6Error = fmt.Sprintf("There is no driver found for the %s compression algorithm, so I cannot unpack the file table",ret.FATstorage)
 			return ret
 		}
-		fatbytes=JCR6StorageDrivers[ret.fatstorage].Unpack(fatcbytes,ret.fatsize)
-		if len(fatbytes)!=ret.fatsize{
-			fmt.Printf("WARNING!!!\nSize after unpacking does NOT match the size written inside the JCR6 file.\nSize is %d and it must be %d\nErrors can be expected!\n",len(fatbytes),ret.fatsize)
+		fatbytes=JCR6StorageDrivers[ret.FATstorage].Unpack(fatcbytes,ret.FATsize)
+		if len(fatbytes)!=ret.FATsize{
+			fmt.Printf("WARNING!!!\nSize after unpacking does NOT match the size written inside the JCR6 file.\nSize is %d and it must be %d\nErrors can be expected!\n",len(fatbytes),ret.FATsize)
 		}
 		//fatbuffer:=bytes.NewBuffer(fatbytes)
 		btf := bytes.NewReader(fatbytes)
@@ -374,7 +374,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 					newentry.Notes = newentry.Datastring["__notes"]
 					centry := strings.ToUpper(newentry.Entry)
 					//fmt.Println("Adding entry: ",centry) // <- Debug
-					ret.entries[centry] = newentry
+					ret.Entries[centry] = newentry
 					
 				}
 			default:
