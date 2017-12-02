@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.11.28
+  version: 17.12.02
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -112,7 +112,47 @@ func Size(file os.File) int {
 func EOF(fi os.File) bool {
 	return !(Pos(fi) < Size(fi))
 }
+
+
+// You want to go all the sh.... Go puts us through just to get the filesize?
+// NAAH! This routine will do that quickly :P
+func FileSize(file string) int {
+     file, err := os.Open(file)
+     if err != nil {
+         // handle the error here
+         return -1
+     }
+     defer file.Close()
+     // get the file size
+     stat, err := file.Stat()
+     if err != nil {
+       return -2
+     }
+     return stat.Size()
+}
+
+func IsDir(filename string) bool {
+	file, err := os.Open(filename)
+	var ret bool
+	if err != nil {
+		// handle the error and return
+	}
+	defer file.Close()
+	fi, err := file.Stat()
+	if err != nil {
+	// handle the error and return
+	}
+	if fi.IsDir() {
+    // it's a directory
+		ret = true
+	} else {
+		// it's not a directory
+		ret = false
+	}
+	return ret
+}
+ 
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.11.28")
+mkl.Version("Tricky's Go Units - qff.go","17.12.02")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
