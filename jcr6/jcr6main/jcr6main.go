@@ -188,6 +188,12 @@ func JCR_B(j TJCR6Dir,entry string) []byte {
 	return ub
 }
 
+func Patch(jo *TJCR6Dir,ji TJCR6Dir){
+	for k,e := range ji.Entries{
+		jo.Entries[k]=e
+	}
+}
+
 // Basically the same as JCR_B, but now returns all data as one big string
 func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
