@@ -1,7 +1,7 @@
 /*
   ansistring.go
   
-  version: 17.12.01
+  version: 17.12.02
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -53,7 +53,7 @@ import(
 var ANSI_Use bool = true
 func init(){
 
-mkl.Version("Tricky's Go Units - ansistring.go","17.12.01")
+mkl.Version("Tricky's Go Units - ansistring.go","17.12.02")
 mkl.Lic    ("Tricky's Go Units - ansistring.go","ZLib License")
 
 	/*Rem
@@ -90,7 +90,7 @@ const A_White     = 7
 bbdoc: Basic 3 digit ANSI string
 returns: The asked string
 */
-func String(d1,d2,d3,s string) string{
+func AString(d1,d2,d3 int,s string) string{
 	if ANSI_Use{
 		return fmt.Sprintf("\x1b[%d;%d;%dm%s\x1b[0m",d1,d2,d3,s) //"\x1b["+d1+";"+d2+";"+d3+"m"+s+Chr(27)+"[0m"
 	} else {
@@ -104,8 +104,8 @@ bbdoc: Basic color string
 about: You can use A_Black, A_Red, A_Green, A_Yellow, A_Blue,A_Magenta,A_Cyan or A_White for color values and A_Norm, A_Bright, A_Dark, A_Underline, A_Blink for flags
 returns: The worked out string
 */	
-func Col( S string, c1 int, c2 int, flags int) string{
-	return ANSI_String(flags,c1+30,C2+40,s)
+func Col( s string, c1 int, c2 int, flags int) string{
+	return AString(flags,c1+30,c2+40,s)
 } //func
 
 
