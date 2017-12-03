@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.02
+        Version: 17.12.03
 */
 
 package jcr6main
@@ -20,11 +20,15 @@ import (
 	"trickyunits/mkl"
 	"trickyunits/qerr"
 	"trickyunits/qff"
+	"trickyunits/qstr"
+	"trickyunits/dirry"
 	"bytes"
 	"sort"
+	"path/filepath"
 )
 
 var debugchat = false
+var impdebug = false
 
 func chat(s string) {
 	if debugchat {
@@ -195,6 +199,20 @@ func Patch(jo *TJCR6Dir,ji TJCR6Dir){
 	}
 }
 
+func PatchFile(jo *TJCR6Dir,patch string) bool{
+	ji:=Dir(patch)
+	if JCR6Error=="" { 
+		Patch(jo,ji) 
+		return true
+	} else {
+		if impdebug {
+			fmt.Println("ERROR IN PATCHING:\n\t= "+JCR6Error)
+		}
+		return false
+	}
+	
+}
+
 // Basically the same as JCR_B, but now returns all data as one big string
 func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
@@ -210,7 +228,7 @@ func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.02")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.03")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
@@ -368,7 +386,8 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 						case 255:
 
 						default:
-							JCR6Error = "Illegal tag"
+							p,_:=btf.Seek(0,1)
+							JCR6Error = fmt.Sprintf("Illegal tag in FILE part %d on fatpos %d",ftag,p)
 							bt.Close()
 							return ret
 						}
@@ -387,7 +406,71 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 				case "COMMENT":
 					commentname:=qff.ReadString(btf)
 					ret.Comments[commentname]=qff.ReadString(btf)
-					
+				case "IMPORT","REQUIRE":
+					if impdebug {
+						fmt.Printf("%s request from %s\n",tag,file)
+					}
+					// Now we're playing with power. Tha ability of 
+					// JCR6 to automatically patch other files into 
+					// one resource
+					deptag := qff.ReadByte(btf)
+					var depk,depv string
+					depm := map[string] string {}
+					for deptag!=255 {
+						depk = qff.ReadString(btf)
+						depv = qff.ReadString(btf)
+						depm[depk] = depv
+						deptag = qff.ReadByte(btf)
+					}
+					depfile  := depm["File"]
+					//depsig   := depm["Signature"]
+					deppatha := depm["AllowPath"]=="TRUE"
+					depcall  := ""
+					var depgetpaths [2][] string 
+					owndir   := filepath.Dir(file)
+					deppath  := 0
+					if impdebug{
+						fmt.Printf("= Wanted file: %s\n",depfile)
+						fmt.Printf("= Allow Path:  %d\n",deppatha)
+						fmt.Printf("= ValConv:     %d\n",deppath)
+						fmt.Printf("= Prio entnum  %d\n",len(ret.Entries))
+					}
+					if deppatha {
+						deppath=1
+					}
+					if owndir != "" {
+						owndir += "/"
+					}
+					depgetpaths[0] = append(depgetpaths[0],owndir)
+					depgetpaths[1] = append(depgetpaths[1],owndir)
+					depgetpaths[1] = append(depgetpaths[1],dirry.Dirry("$AppData$/JCR6/Dependencies/") )
+					if qstr.Left(depfile,1)!="/" && qstr.Left(depfile,2)!=":"{
+						for _,depdir:=range depgetpaths[deppath]{
+							if (depcall=="") && qff.Exists(depdir+depfile) {
+								depcall=depdir+depfile
+							} else if depcall=="" && impdebug {
+								if !qff.Exists(depdir+depfile) {
+									fmt.Printf("It seems %s doesn't exist!!\n",depdir+depfile)
+								}
+							}
+						}	
+					} else {
+						if qff.Exists(depfile) {
+							depcall=depfile
+						}
+					}
+					if depcall!="" {
+						if (!PatchFile(&ret,depcall)) && tag=="REQUIRE"{
+							jcr6err("Required JCR6 addon file ("+depcall+") could not imported!~n~nImporter reported:~n"+JCR6Error) //,fil,"N/A","JCR 6 Driver: Dir()")
+							return ret
+						} else if tag=="REQUIRE"{
+							jcr6err("Required JCR6 addon file ("+depcall+") could not found!") //,fil,"N/A","JCR 6 Driver: Dir()")
+						}
+					} else if impdebug {
+						fmt.Printf("Importing %s failed!",depfile)
+						fmt.Printf("Request:    %s",tag)
+					}
+
 				}
 			default:
 				JCR6Error = fmt.Sprintf("Unknown main tag %d", mtag)
