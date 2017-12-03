@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.02
+        Version: 17.12.03
 */
 
 
@@ -69,7 +69,7 @@ jcr6main.JCR6Drivers["Real Dir"].Dir = func(file string) jcr6main.TJCR6Dir {
 	return ret
 }
 
-mkl.Version("Tricky's Go Units - jcr6realdir.go","17.12.02")
+mkl.Version("Tricky's Go Units - jcr6realdir.go","17.12.03")
 mkl.Lic    ("Tricky's Go Units - jcr6realdir.go","Mozilla Public License 2.0")
 
 }
