@@ -57,6 +57,7 @@ type TJCR6Entry struct {
 type TJCR6Dir struct {
 	Entries    map[string]TJCR6Entry
 	Comments   map[string]string
+	Vars       map[string]string
 	CFGint     map[string]int32
 	CFGbool    map[string]bool
 	CFGstr     map[string]string
@@ -254,6 +255,8 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 		ret.CFGbool = map[string]bool{}
 		ret.CFGint = map[string]int32{}
 		ret.CFGstr = map[string]string{}
+		ret.Vars = map[string]string{}
+		ret.Comments = map[string]string{}
 		bt, e := os.Open(file)
 		qerr.QERR(e)
 		if qff.RawReadString(bt, 5) != "JCR6\x1a" {
@@ -381,6 +384,9 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 					centry := strings.ToUpper(newentry.Entry)
 					//fmt.Println("Adding entry: ",centry) // <- Debug
 					ret.Entries[centry] = newentry
+				case "COMMENT":
+					commentname:=qff.ReadString(btf)
+					ret.Comments[commentname]=qff.ReadString(btf)
 					
 				}
 			default:
