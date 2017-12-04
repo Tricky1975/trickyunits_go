@@ -228,6 +228,21 @@ func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 	return r
 }
 
+func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
+	e:="**** JCR 6 ERROR ****"
+	e+="Error message: %s\n"
+	e+="Main file:     %s\n"
+	e+="Entry:         %s\n"
+	e+="Function:      %s\n"
+	e=fmt.Sprintf(e,AError,AFile,AEntry,AFunc)
+	fmt.Print(e)
+	if JCR6Crash {
+		os.Exit(1)
+	} else {
+		JCR6Error = e
+	}
+}
+
 func init() {
 mkl.Version("Tricky's Go Units - jcr6main.go","17.12.04")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")

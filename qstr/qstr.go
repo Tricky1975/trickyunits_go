@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.12.02
+  version: 17.12.04
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -139,5 +139,5 @@ func AlphaSort(s [] string){
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.02")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.04")
 }
