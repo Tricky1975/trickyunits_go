@@ -23,7 +23,7 @@ import (
 	"trickyunits/qstr"
 	"trickyunits/dirry"
 	"bytes"
-	"sort"
+	//"sort"
 	"path/filepath"
 )
 
@@ -135,7 +135,8 @@ func Entries(J TJCR6Dir) string {
 // The files are sorted by alphabet
 func EntryList(J TJCR6Dir) []string{
 	r:= strings.Split(Entries(J),"\n")
-	sort.Strings(r)
+	//sort.Strings(r)
+	qstr.AlphaSort(r)
 	return r
 }
 

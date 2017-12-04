@@ -23,6 +23,7 @@ import(
     "trickyunits/mkl"
     "strconv"
     "strings"
+    "sort"
     )
     
 
@@ -112,6 +113,29 @@ func StripDir(file string) string{
 func StripAll(file string) string{
 	return StripDir(StripExt(file))
 }
+
+// This code has been set up by Koala3 on StackOverflow.com
+type Alphabetic []string
+
+func (list Alphabetic) Len() int { return len(list) }
+
+func (list Alphabetic) Swap(i, j int) { list[i], list[j] = list[j], list[i] }
+
+func (list Alphabetic) Less(i, j int) bool {
+    var si string = list[i]
+    var sj string = list[j]
+    var si_lower = strings.ToLower(si)
+    var sj_lower = strings.ToLower(sj)
+    if si_lower == sj_lower {
+        return si < sj
+    }
+    return si_lower < sj_lower
+}
+
+func AlphaSort(s [] string){
+	sort.Sort(Alphabetic(s))
+}
+
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
