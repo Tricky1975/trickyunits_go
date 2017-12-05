@@ -47,25 +47,29 @@ type TGINI struct{
 	
 } 
 
-func (g TGINI) init1st(){
+func (g *TGINI) init1st(){
 	if g.init {
 		return
 	}
+	//fmt.Println("Init new GINI variable")
+	//fmt.Printf("before %s\n",g.vars)
 	g.init  = true
-	g.vars  = map[string] string{}
+	g.vars  = make(map[string] string)
 	g.lists = map[string] []string{}
+	//fmt.Printf("after %s\n",g.vars)
 }
 
 // Define var
-func (g TGINI) D(s string,v string) {
+func (g *TGINI) D(s string,v string) {
 	g.init1st()
+	//g.vars  = make(map[string] string) // debug!
 	g.vars[strings.ToUpper(s)] = v
 }
 
 // Read (call) var
-func (g TGINI) C(s string) string{
+func (g *TGINI) C(s string) string{
 	g.init1st()
-	if v,ok:=g.vars[strings.ToUpper(s)];!ok {
+	if v,ok:=g.vars[strings.ToUpper(s)];ok {
 		return v
 	} else {
 		return ""
@@ -73,7 +77,7 @@ func (g TGINI) C(s string) string{
 }
 
 // Creates a list
-func (g TGINI) CL(a string, onlyifnotexist bool) {
+func (g *TGINI) CL(a string, onlyifnotexist bool) {
 	g.init1st()
 	if _,ok:=g.lists[strings.ToUpper(a)];ok{
 		if onlyifnotexist {
@@ -84,14 +88,14 @@ func (g TGINI) CL(a string, onlyifnotexist bool) {
 }
 
 // Add value to a list. If not existent create it
-func (g TGINI) Add(nlist string,value string){
+func (g *TGINI) Add(nlist string,value string){
 	g.CL(nlist,true)
 	l:=strings.ToUpper(nlist)
 	g.lists[l] = append(g.lists[l],value)
 }
 
 // Just returns the list. Creates it if it doesn't yet exist!
-func (g TGINI) List(nlist string) []string{
+func (g *TGINI) List(nlist string) []string{
 	g.CL(nlist,true)
 	return g.lists[strings.ToUpper(nlist)]
 }
@@ -100,7 +104,7 @@ func (g TGINI) List(nlist string) []string{
 // Please note this method is for merging data purposes, if you don't
 // want to merge, use the regular functions ;)
 
-func (g TGINI) ParseLines(l []string) {
+func (g *TGINI) ParseLines(l []string) {
 	// this entire function has been translated from BlitzMax, however the [OLD] tag has been removed.
 	g.init1st()
 	lst:=make([]string,0)
@@ -246,7 +250,7 @@ func (g TGINI) ParseLines(l []string) {
 } //End Function
 
 
-func (g TGINI) ReadFromBytes(b []byte){
+func (g *TGINI) ReadFromBytes(b []byte){
 	// This is a new approach for GINI.
 	// The BlitzMax variabt doesn't even support it.
 	g.init1st()
