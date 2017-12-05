@@ -1,7 +1,7 @@
 /*
   dirry_windows.go
   
-  version: 17.12.03
+  version: 17.12.05
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -28,7 +28,7 @@ import (
 var predata map[string] string
 
 func init(){
-mkl.Version("Tricky's Go Units - dirry_windows.go","17.12.03")
+mkl.Version("Tricky's Go Units - dirry_windows.go","17.12.05")
 mkl.Lic    ("Tricky's Go Units - dirry_windows.go","ZLib License")
 
 predata=map[string] string{}
