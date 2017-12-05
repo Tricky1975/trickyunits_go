@@ -11,3 +11,5 @@ For the license, I'll say everything is zLib licensed unless there's a license b
 If you clone any repositories from me of projects written in go, please note that in the workspace repository the folder in which all this stuff is located must be named "trickyunits" (I don't know if it matters in Windows, but on unix based systems it will be very important to have that name in LOWER CASE).
 
 
+
+Best is not to use "go get" to retrieve these. Most code will not work that way unless you're gonna change all "import" calls yourself in all .go file of mine you'll come across. Just use the git tools to clone these in the src dir.
