@@ -137,7 +137,7 @@ func AlphaSort(s [] string){
 }
 
 func MyTrim(a string) string{
-	return strings.Trim(a," \t\n\r\0")
+	return strings.Trim(a," \t\n\r\x00")
 }
 
 
