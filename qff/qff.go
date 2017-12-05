@@ -151,6 +151,27 @@ func IsDir(filename string) bool {
 	}
 	return ret
 }
+
+func GetFile(filename string) []byte {
+	// Please note... this is not the fastest, but it is the most stable.
+	// Files longer than 32767 bytes have shown to get truncated only loading 
+	// zero-characters after offset 32767 and I simply cannot risk that.
+	// Rather a slow routine that works, than a fast one showing trouble.
+	size:=FileSize(filename)
+	bt:=os.Open(filename)
+	defer bt.Close()
+	ret:=make([]byte,size)
+	b:=make([]byte,1)
+	for i:=0;i<=size;i++{
+		bt.Read(b)
+		ret[i]=b[0]
+	}
+	return ret
+}
+
+func GetString(filename string) string {
+	return string(GetFile(filename))
+}
  
 func init() {
 mkl.Version("Tricky's Go Units - qff.go","17.12.02")
