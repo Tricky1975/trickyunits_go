@@ -31,11 +31,11 @@ package gini
  
 import(
 	"strings"
-	"qstr"
 	"bytes"
+	"trickyunits/qstr"
 )
  
-const allowedChars$ = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
+const allowedCharscd  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
 
 // The GINI type
 type TGINI struct{
@@ -45,7 +45,7 @@ type TGINI struct{
 	
 } 
 
-func (g TGINI).init1st(){
+func (g TGINI) init1st(){
 	if g.init {
 		return
 	}
@@ -55,13 +55,13 @@ func (g TGINI).init1st(){
 }
 
 // Define var
-func (g TGINI).D(s string,v string) {
+func (g TGINI) D(s string,v string) {
 	g.init1st()
 	g.vars[strings.ToUpper(s)] = v
 }
 
 // Read (call) var
-func (g.TGINI).C(s string) string
+func (g.TGINI) C(s string) string
 	g.init1st()
 	if v,ok:=g.vars[strings.ToUpper(s)];!ok {
 		return v
@@ -71,7 +71,7 @@ func (g.TGINI).C(s string) string
 }
 
 // Creates a list
-func (g.TGINI).CL(a string, onlyifnotexist bool) {
+func (g.TGINI) CL(a string, onlyifnotexist bool) {
 	if _,ok=g.list[strings.ToUpper(a)];ok{
 		if onlyifnotexist {
 			return
@@ -81,14 +81,14 @@ func (g.TGINI).CL(a string, onlyifnotexist bool) {
 }
 
 // Add value to a list. If not existent create it
-func (g.TGINI).Add(nlist string,value string){
+func (g.TGINI) Add(nlist string,value string){
 	g.CL(nlist,true)
 	l:=strings.ToUpper(nlist)
 	g.lists[l] = append(g.lists[l],value)
 }
 
 // Just returns the list. Creates it if it doesn't yet exist!
-func (g.TGINI).List(nlist string) []string{
+func (g.TGINI) List(nlist string) []string{
 	g.CL(nlist,true)
 	return g.lists(strings.ToUpper(nlist)]
 }
@@ -97,7 +97,7 @@ func (g.TGINI).List(nlist string) []string{
 // Please note this method is for merging data purposes, if you don't
 // want to merge, use the regular functions ;)
 
-func (g.TGINI).ParseLines(l []string) {
+func (g.TGINI) ParseLines(l []string) {
 	// this entire function has been translated from BlitzMax, however the [OLD] tag has been removed.
 	wtag:=""
 	lst:=make([]string,0)
@@ -324,6 +324,10 @@ func ReadFromBytes(thebytes []byte) TGINI{
 	ret.ReadFromBytes(thebytes)
 }
 
+
+// This function can read a GINI file.
+// Either being a 'text' file or 'compiled' file doesn't matter
+// this routine can autodetect that.
 func ReadFromFile(file sring) TGINI{
 	var ret TGINI
 	if !qff.Exists(file) {
