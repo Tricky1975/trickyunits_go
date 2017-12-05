@@ -30,12 +30,14 @@ package gini
  */
  
 import(
-	"strings"
+	"fmt"
 	"bytes"
+	"strings"
+	"trickyunits/qff"
 	"trickyunits/qstr"
 )
  
-const allowedCharscd  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
+const allowedChars  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
 
 // The GINI type
 type TGINI struct{
@@ -50,8 +52,8 @@ func (g TGINI) init1st(){
 		return
 	}
 	g.init  = true
-	g.vars  = map [string] string{}
-	g.lists = map [string] []string
+	g.vars  = map[string] string{}
+	g.lists = map[string] []string{}
 }
 
 // Define var
@@ -61,7 +63,7 @@ func (g TGINI) D(s string,v string) {
 }
 
 // Read (call) var
-func (g.TGINI) C(s string) string
+func (g TGINI) C(s string) string{
 	g.init1st()
 	if v,ok:=g.vars[strings.ToUpper(s)];!ok {
 		return v
@@ -71,8 +73,9 @@ func (g.TGINI) C(s string) string
 }
 
 // Creates a list
-func (g.TGINI) CL(a string, onlyifnotexist bool) {
-	if _,ok=g.list[strings.ToUpper(a)];ok{
+func (g TGINI) CL(a string, onlyifnotexist bool) {
+	g.init1st()
+	if _,ok:=g.lists[strings.ToUpper(a)];ok{
 		if onlyifnotexist {
 			return
 		}
@@ -81,39 +84,40 @@ func (g.TGINI) CL(a string, onlyifnotexist bool) {
 }
 
 // Add value to a list. If not existent create it
-func (g.TGINI) Add(nlist string,value string){
+func (g TGINI) Add(nlist string,value string){
 	g.CL(nlist,true)
 	l:=strings.ToUpper(nlist)
 	g.lists[l] = append(g.lists[l],value)
 }
 
 // Just returns the list. Creates it if it doesn't yet exist!
-func (g.TGINI) List(nlist string) []string{
+func (g TGINI) List(nlist string) []string{
 	g.CL(nlist,true)
-	return g.lists(strings.ToUpper(nlist)]
+	return g.lists[strings.ToUpper(nlist)]
 }
 
 // Parses the lines of a text-based GINI file into the GINI data
 // Please note this method is for merging data purposes, if you don't
 // want to merge, use the regular functions ;)
 
-func (g.TGINI) ParseLines(l []string) {
+func (g TGINI) ParseLines(l []string) {
 	// this entire function has been translated from BlitzMax, however the [OLD] tag has been removed.
-	wtag:=""
+	g.init1st()
 	lst:=make([]string,0)
 	tag:=""
 	tagsplit:=make([] string,0)
-	tagparam:=make([] string,0)
+	//tagparam:=make([] string,0)
 	tline:=""
 	cmd:=""
 	para:=""
 	pos:=0
+	line:=""
 	linenumber:=0 // Not present in BMax, but required in go, and makes it even easier of debugging too :P
-	for linenumber,line=range l
+	for linenumber,line=range l{
 		if line!=""{			
 			if qstr.Left(qstr.MyTrim(line),1)=="[" && qstr.Right(qstr.MyTrim(line),1)=="]" {
-				wTag = qstr.Mid(qstr.MyTrim(line),2,len(qstr.MyTrim(line))-2)
-				if Upper(wTag)=="OLD"{
+				wTag := qstr.Mid(qstr.MyTrim(line),2,len(qstr.MyTrim(line))-2)
+				if strings.ToUpper(wTag)=="OLD"{
 					fmt.Printf("ERROR! The [old] tag is NOT supported in this Go version of GINI (and in the original BlitzMax version it's deprecated) in line %d",linenumber)
 					return
 				}
@@ -127,13 +131,13 @@ func (g.TGINI) ParseLines(l []string) {
 					lst = make([] string,0)
 					for _,K:=range strings.Split(tagsplit[1],",") {
 						//'ini.clist(UnIniString(K))
-						g.Lists[strings.ToUpper(UnIniString(K))] = lst
+						g.lists[strings.ToUpper(UnIniString(K))] = lst
 					} //Next
 					//'lst=ini.list(UnIniString(K))	
 				}//EndIf
 			} else {
-				switch(tag) //Select tag
-				case: "REM"
+				switch(tag) { //Select tag
+				case "REM":
 				/* This is the "OLD" tag code. This code is still in the original BlitzMax form and NOT translated.
 				 * It's kept for archiving sake, in case the code may still be needed for whatever reason.				
 				Case "OLD"
@@ -179,15 +183,15 @@ func (g.TGINI) ParseLines(l []string) {
 						EndIf
 				*/
 				case "SYS","SYSTEM":
-					tline = qsty.MyTrim(line)
+					tline = qstr.MyTrim(line)
 					pos = strings.IndexAny(tline," ") //tline.find(" ")
-					if pos<-1 {
+					if pos<= -1 {
 						pos = len(tline)
 					}
-					cmd  = string.ToUpper(tline[:pos])
+					cmd  = strings.ToUpper(tline[:pos])
 					para = tline[pos+1:]
-					switch( cmd )
-						case "IMPORT","INCLUDE"
+					switch( cmd ){
+						case "IMPORT","INCLUDE":
 							pos = strings.IndexAny(para,"/") //para.find("/")<0
 							/*
 							?win32
@@ -205,7 +209,8 @@ func (g.TGINI) ParseLines(l []string) {
 							Print "Including: "+para
 							?
 							*/ 
-							g.ReadFile(para) //LoadIni para,ini
+							//g.ReadFile(para) //LoadIni para,ini
+							fmt.Printf("Line %d -- WARNING\nNo support yet for file inclusion or importing\n")
 						default:
 							fmt.Printf("System command %s not understood: %s in line %d\n",cmd,tline,linenumber)
 					} //End Select	 
@@ -215,14 +220,14 @@ func (g.TGINI) ParseLines(l []string) {
 					} else {
 						//tagsplit=line.split("=")
 						temppos:=strings.IndexAny(line,"=")
-						tagsplit=make([]strings,2)
+						tagsplit=make([]string,2)
 						tagsplit[0]=line[:temppos]
 						tagsplit[1]=line[temppos+1:]
-						Ini.D UnIniString(tagsplit[0]),UnIniString(tagsplit[1])
+						g.D( UnIniString(tagsplit[0]),UnIniString(tagsplit[1]) )
 					} //EndIf
 				case "LIST":
-					lst = append(lst,UnUniString(line)) //ListAddLast lst,uninistring(line)
-				case "CALL"
+					lst = append(lst,UnIniString(line)) //ListAddLast lst,uninistring(line)
+				case "CALL":
 					fmt.Print("WARNING! I cannot execute line %d as the [CALL] block is not supported in Go\n",linenumber)
 					/*If line.find(":")<0
 						Print "Call: Syntax error: "+line
@@ -244,8 +249,8 @@ func (g.TGINI) ParseLines(l []string) {
 func (g TGINI) ReadFromBytes(b []byte){
 	// This is a new approach for GINI.
 	// The BlitzMax variabt doesn't even support it.
-	g.initfirst()
-	bt:=bytes.NewReader(&b)
+	g.init1st()
+	bt:=bytes.NewReader(b)
 	head:=qff.RawReadString(bt,5)
 	if head!="GINI\x1a" {
 		fmt.Println("The buffer read is not a GINI binary")
@@ -267,17 +272,17 @@ func (g TGINI) ReadFromBytes(b []byte){
 				g.Add(kl,kv)
 			case   4:
 				list2link:=qff.ReadString(bt)
-				list2link2:qff.ReadString(bt)
+				list2link2:=qff.ReadString(bt)
 				g.lists[list2link]=g.lists[list2link2]
 			case 255:
 				return
 			default:
 				fmt.Printf("ERROR! Unknown tag: %d",tag)
 				return
-			}
+			
 		}
-	}
-}
+	} // for
+} // func
 
 // The functions below have also been translated from BlitzMax
 
@@ -289,7 +294,7 @@ func IniString(A string) string {// XAllow been removed
 	ret:=""
 	allowed := true
 	for i=0;i<len(A);i++{
-		allowed = allowed && strings.IndexAny(allowedChars,string(A[i]) //(allowedchars+XAllow).find(Chr(A[i]))>=0
+		allowed = allowed && strings.IndexAny(allowedChars,string(A[i]))>(-1) //(allowedchars+XAllow).find(Chr(A[i]))>=0
 		//'If Not allowed Print "I will not allow: "+Chr(A[i])+"/"+A
 		ret+=fmt.Sprintf("#(%d)",A[i])
 	} //Next
@@ -305,30 +310,31 @@ func IniString(A string) string {// XAllow been removed
 func UnIniString(A string) string {
 	ret:=A
 	for i:=0;i<256;i++{
-		ret = string.Replace(ret,"#("+i+")",string(i))
+		ret = strings.Replace(ret,fmt.Sprintf("#(%d)",i),string(i),-900)
 		//ret = string.Replace(ret,"#u("+i+")",string(i))
 	} //Next
 	return ret	
 } //End Function
 
 func ReadFromLines (lines []string) TGINI{
-	ret:=&TGINI{}
-	ret.initfirst()
+	ret:=TGINI{}
+	ret.init1st()
 	ret.ParseLines(lines)
 	return ret
 }
 
 func ReadFromBytes(thebytes []byte) TGINI{
-	ret:=&TGINI{}
-	ret.inifirst()
+	ret:=TGINI{}
+	ret.init1st()
 	ret.ReadFromBytes(thebytes)
+	return ret
 }
 
 
 // This function can read a GINI file.
 // Either being a 'text' file or 'compiled' file doesn't matter
 // this routine can autodetect that.
-func ReadFromFile(file sring) TGINI{
+func ReadFromFile(file string) TGINI{
 	var ret TGINI
 	if !qff.Exists(file) {
 		fmt.Printf("GINI file %f doesn't exist",file)
@@ -339,7 +345,7 @@ func ReadFromFile(file sring) TGINI{
 		ret = ReadFromBytes(b)
 	} else {
 		s:=string(b)
-		sl = strings.Split("\n")
+		sl := strings.Split(s,"\n")
 		ret = ReadFromLines(sl)
 	}
 	return ret
