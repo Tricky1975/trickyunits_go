@@ -39,6 +39,8 @@ import(
  
 const allowedChars  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
 
+
+
 // The GINI type
 type TGINI struct{
 	vars map [string] string
@@ -116,6 +118,7 @@ func (g *TGINI) ParseLines(l []string) {
 	para:=""
 	pos:=0
 	line:=""
+	listkeys:=make([]string,0)
 	linenumber:=0 // Not present in BMax, but required in go, and makes it even easier of debugging too :P
 	for linenumber,line=range l{
 		if line!=""{			
@@ -133,8 +136,10 @@ func (g *TGINI) ParseLines(l []string) {
 						return
 					}
 					lst = make([] string,0)
-					for _,K:=range strings.Split(tagsplit[1],",") {
+					listkeys=strings.Split(tagsplit[1],",")
+					for _,K:=range  listkeys{
 						//'ini.clist(UnIniString(K))
+						//fmt.Printf("Creating list: %s\n",K)
 						g.lists[strings.ToUpper(UnIniString(K))] = lst
 					} //Next
 					//'lst=ini.list(UnIniString(K))	
@@ -231,6 +236,11 @@ func (g *TGINI) ParseLines(l []string) {
 					} //EndIf
 				case "LIST":
 					lst = append(lst,UnIniString(line)) //ListAddLast lst,uninistring(line)
+					for _,K:=range  listkeys{
+						g.lists[K]=lst
+						//fmt.Printf("[%s] ",K)
+					}
+					//fmt.Printf("Adding string '%s' to list\n",line)
 				case "CALL":
 					fmt.Print("WARNING! I cannot execute line %d as the [CALL] block is not supported in Go\n",linenumber)
 					/*If line.find(":")<0
