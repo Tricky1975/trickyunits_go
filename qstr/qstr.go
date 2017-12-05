@@ -136,6 +136,10 @@ func AlphaSort(s [] string){
 	sort.Sort(Alphabetic(s))
 }
 
+func MyTrim(a string) string{
+	return strings.Trim(a," \t\n\r\0")
+}
+
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
