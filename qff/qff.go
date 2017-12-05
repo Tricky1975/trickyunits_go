@@ -23,6 +23,7 @@ import (
 	"encoding/binary"
 	"io"
 	"os"
+	"fmt"
 	"trickyunits/mkl"
 	"trickyunits/qerr"
 	"trickyunits/qstr"
@@ -157,9 +158,13 @@ func GetFile(filename string) []byte {
 	// Files longer than 32767 bytes have shown to get truncated only loading 
 	// zero-characters after offset 32767 and I simply cannot risk that.
 	// Rather a slow routine that works, than a fast one showing trouble.
-	size:=FileSize(filename)
-	bt:=os.Open(filename)
+	size=FileSize(filename)
+	bt,err:=os.Open(filename)
 	defer bt.Close()
+	if err!=nil{
+		fmt.Printf("ERROR!\nI could not open %s\n%s",file,err.Error())
+		return
+	}
 	ret:=make([]byte,size)
 	b:=make([]byte,1)
 	for i:=0;i<=size;i++{
