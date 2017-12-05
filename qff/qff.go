@@ -163,7 +163,7 @@ func GetFile(filename string) []byte {
 	defer bt.Close()
 	if err!=nil{
 		fmt.Printf("ERROR!\nI could not open %s\n%s",file,err.Error())
-		return
+		return make([]byte,0)
 	}
 	ret:=make([]byte,size)
 	b:=make([]byte,1)
