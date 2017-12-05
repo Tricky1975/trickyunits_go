@@ -1,5 +1,7 @@
 # GINI Is Not Ini 
 
+![](https://github.com/Tricky1975/trickyunits_go/blob/master/gini/Anime-Girl-Illustration.png?raw=true)
+
 GINI is nothing more but a quick configuration system I whipped up for 
 easily configuring many of my programs.
 
@@ -43,3 +45,7 @@ A few notes
 
 
 
+
+
+- GINI was written by Jeroen P. Broks and is zlib licensed
+- The girl used as logo was posted by GDJ on openclipart.com and should be Public Domain (as the site demands that). (If it's not PD, lemme know and I shall replace that picture)
