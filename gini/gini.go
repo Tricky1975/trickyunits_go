@@ -1,7 +1,7 @@
 /*
   gini.go
   
-  version: 17.12.05
+  version: 17.12.07
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
