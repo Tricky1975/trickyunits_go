@@ -45,7 +45,8 @@ const allowedChars  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWE
 // The GINI type
 type TGINI struct{
 	vars map [string] string
-	lists map [string] []string
+	lists[] []string
+	listpointer map[string] int
 	//lists map[string] qll.StringList
 	init bool
 	
@@ -59,7 +60,9 @@ func (g *TGINI) init1st(){
 	//fmt.Printf("before %s\n",g.vars)
 	g.init  = true
 	g.vars  = map[string] string{}
-	g.lists = map[string] []string{}
+	g.lists = make([][]string,0)
+	g.listpointer = map[string]int{}
+	//g.lists = map[string] []string{}
 	//g.lists = map[string] qll.StringList{}
 	//fmt.Printf("after %s\n",g.vars)
 }
@@ -84,20 +87,23 @@ func (g *TGINI) C(s string) string{
 // Creates a list
 func (g *TGINI) CL(a string, onlyifnotexist bool) {
 	g.init1st()
-	if _,ok:=g.lists[strings.ToUpper(a)];ok{
+	if _,ok:=g.listpointer[strings.ToUpper(a)];ok{
 		if onlyifnotexist {
 			return
 		}
 	}
-	fmt.Printf("Creating list: %s\n",a)
+	//fmt.Printf("Creating list: %s\n",a)
 	//g.lists[strings.ToUpper(a)] = qll.CreateStringList() // make([]string,0)
-	g.lists[strings.ToUpper(a)] = make([]string,0)
+	//g.lists[strings.ToUpper(a)] = make([]string,0)
+	g.lists = append(g.lists,make([]string,0) )
+	g.listpointer[strings.ToUpper(a)] = len(g.lists)-1
 }
 
 // Add value to a list. If not existent create it
 func (g *TGINI) Add(nlist string,value string){
 	g.CL(nlist,true)
-	l:=strings.ToUpper(nlist)
+	cl:=strings.ToUpper(nlist)
+	l:=g.listpointer[cl]
 	g.lists[l] = append(g.lists[l],value)
 	//qll.StringListAddLast(&(g.lists[l]),value)
 }
@@ -106,7 +112,19 @@ func (g *TGINI) Add(nlist string,value string){
 func (g *TGINI) List(nlist string) []string{
 	g.CL(nlist,true)
 	//lists[strings.ToUpper(nlist)]
-	return g.lists[strings.ToUpper(nlist)]
+	return g.lists[g.listpointer[strings.ToUpper(nlist)]]
+}
+
+// Duplicates the pointer of a list to a new list name
+// If the original list does not exist the request will be ignored!
+// Also note if the target destination already has a list it will remain there
+// And the garbage collector won't pick it up unless the entire GINI var is destroyed)
+func (g *TGINI) ListDupe(source,target string){
+	cs := strings.ToUpper(source)
+	ct := strings.ToUpper(target)
+	if src,ok:=g.listpointer[cs];ok{
+		g.listpointer[ct]=src
+	}
 }
 
 // Parses the lines of a text-based GINI file into the GINI data
@@ -116,7 +134,8 @@ func (g *TGINI) List(nlist string) []string{
 func (g *TGINI) ParseLines(l []string) {
 	// this entire function has been translated from BlitzMax, however the [OLD] tag has been removed.
 	g.init1st()
-	lst:=make([]string,0)
+	//lst:=make([]string,0)
+	lst:=-1
 	//var lst //qll.StringList
 	tag:=""
 	tagsplit:=make([] string,0)
@@ -144,13 +163,16 @@ func (g *TGINI) ParseLines(l []string) {
 						return
 					}
 					//lst = qll.CreateStringList() //make([] string,0)
-					lst = []string{}
+					lst = len(g.lists) //[]string{}
+					g.lists = append(g.lists,[]string{})
 					listkeys=strings.Split(tagsplit[1],",")
 					for _,K:=range  listkeys{
 						//'ini.clist(UnIniString(K))
 						//fmt.Printf("Creating list: %s\n",K)
-						g.lists[strings.ToUpper(UnIniString(K))] = lst
+						//g.lists[strings.ToUpper(UnIniString(K))] = lst
+						g.listpointer[strings.ToUpper(UnIniString(K))] = lst
 					} //Next
+					 
 					//'lst=ini.list(UnIniString(K))	
 				}//EndIf
 			} else {
@@ -244,14 +266,17 @@ func (g *TGINI) ParseLines(l []string) {
 						g.D( UnIniString(tagsplit[0]),UnIniString(tagsplit[1]) )
 					} //EndIf
 				case "LIST":
-					lst = append(lst,UnIniString(line)) //ListAddLast lst,uninistring(line)
+					g.lists[lst] = append(g.lists[lst],UnIniString(line)) //ListAddLast lst,uninistring(line)
 					/*
 					* */
 					//lst.Add(UnIniString(line))
+					/*
 					for _,K:=range  listkeys{
 						g.lists[K]=lst
 						//fmt.Printf("[%s] ",K)
 					}
+					*/
+					//g.lists[lst] = append(g.lists[lst],line)
 					//fmt.Printf("Adding string '%s' to list\n",line)
 					 
 				case "CALL":
@@ -300,7 +325,7 @@ func (g *TGINI) ReadFromBytes(b []byte){
 			case   4:
 				list2link:=qff.ReadString(bt)
 				list2link2:=qff.ReadString(bt)
-				g.lists[list2link]=g.lists[list2link2]
+				g.listpointer[list2link]=g.listpointer[list2link2]
 			case 255:
 				return
 			default:
