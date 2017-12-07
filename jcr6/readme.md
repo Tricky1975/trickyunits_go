@@ -1,4 +1,4 @@
-![JCR6](https://github.com/Tricky1975/trickyunits_go/raw/master/jcr6/JCR.PNG?raw=true]
+![JCR6](https://github.com/Tricky1975/trickyunits_go/raw/master/jcr6/JCR.PNG?raw=true)
 
 This is a collection of libraries for Go to read JCR6 files and other formats JCR6 should be able to read.
 
