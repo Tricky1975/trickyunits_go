@@ -35,6 +35,7 @@ import(
 	"strings"
 	"trickyunits/qff"
 	"trickyunits/qstr"
+	// "trickyunits/qll" // Go failed!
 )
  
 const allowedChars  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '."
@@ -45,6 +46,7 @@ const allowedChars  = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWE
 type TGINI struct{
 	vars map [string] string
 	lists map [string] []string
+	//lists map[string] qll.StringList
 	init bool
 	
 } 
@@ -56,8 +58,9 @@ func (g *TGINI) init1st(){
 	//fmt.Println("Init new GINI variable")
 	//fmt.Printf("before %s\n",g.vars)
 	g.init  = true
-	g.vars  = make(map[string] string)
+	g.vars  = map[string] string{}
 	g.lists = map[string] []string{}
+	//g.lists = map[string] qll.StringList{}
 	//fmt.Printf("after %s\n",g.vars)
 }
 
@@ -86,6 +89,8 @@ func (g *TGINI) CL(a string, onlyifnotexist bool) {
 			return
 		}
 	}
+	fmt.Printf("Creating list: %s\n",a)
+	//g.lists[strings.ToUpper(a)] = qll.CreateStringList() // make([]string,0)
 	g.lists[strings.ToUpper(a)] = make([]string,0)
 }
 
@@ -94,11 +99,13 @@ func (g *TGINI) Add(nlist string,value string){
 	g.CL(nlist,true)
 	l:=strings.ToUpper(nlist)
 	g.lists[l] = append(g.lists[l],value)
+	//qll.StringListAddLast(&(g.lists[l]),value)
 }
 
 // Just returns the list. Creates it if it doesn't yet exist!
 func (g *TGINI) List(nlist string) []string{
 	g.CL(nlist,true)
+	//lists[strings.ToUpper(nlist)]
 	return g.lists[strings.ToUpper(nlist)]
 }
 
@@ -110,6 +117,7 @@ func (g *TGINI) ParseLines(l []string) {
 	// this entire function has been translated from BlitzMax, however the [OLD] tag has been removed.
 	g.init1st()
 	lst:=make([]string,0)
+	//var lst //qll.StringList
 	tag:=""
 	tagsplit:=make([] string,0)
 	//tagparam:=make([] string,0)
@@ -135,7 +143,8 @@ func (g *TGINI) ParseLines(l []string) {
 						fmt.Println("ERROR! Incorrectly defined list in line %d!",linenumber)
 						return
 					}
-					lst = make([] string,0)
+					//lst = qll.CreateStringList() //make([] string,0)
+					lst = []string{}
 					listkeys=strings.Split(tagsplit[1],",")
 					for _,K:=range  listkeys{
 						//'ini.clist(UnIniString(K))
@@ -236,11 +245,15 @@ func (g *TGINI) ParseLines(l []string) {
 					} //EndIf
 				case "LIST":
 					lst = append(lst,UnIniString(line)) //ListAddLast lst,uninistring(line)
+					/*
+					* */
+					//lst.Add(UnIniString(line))
 					for _,K:=range  listkeys{
 						g.lists[K]=lst
 						//fmt.Printf("[%s] ",K)
 					}
 					//fmt.Printf("Adding string '%s' to list\n",line)
+					 
 				case "CALL":
 					fmt.Print("WARNING! I cannot execute line %d as the [CALL] block is not supported in Go\n",linenumber)
 					/*If line.find(":")<0

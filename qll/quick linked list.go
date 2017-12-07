@@ -17,7 +17,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-package 
+package qll
 
 
 /*
@@ -26,18 +26,34 @@ package
  * however as "append" always creates a new pointer some links get
  * broken. This way, I can force them to the same pointer
  * 
+ * For some reason Go likes the (needlessly) complicated approach on this... 
+ * So in the end this didn't work as intended!
+ * Still I will keep this in case i find out how to PROPERLY deal with 
+ * this.
+ * 
  */
 
 import(
 	"trickyunits/mkl"
+	"fmt"
 	)
+	
+const debugchat = true
+func chat(dtext string,s ...interface{}) {
+	if debugchat {
+		fmt.Printf(dtext+"\n",s)
+	}
+}
 	
 type StringList struct {
 	list []string
 }
 
-func (sl *StringList) Add(s string)
+func (sl *StringList) Add(s string) {
 	sl.list = append(sl.list,s)
+	l:=len(sl.list)
+	chat("Added '%s' to stringlist",s)
+	chat("I know have %d items",l)
 }
 
 func (sl *StringList) RemoveIndexes(idx ...int) {
@@ -45,7 +61,7 @@ func (sl *StringList) RemoveIndexes(idx ...int) {
 	for i,v:=range sl.list{
 		k:=true
 		for _,j:=range(idx){
-			k = k && idx!=i
+			k = k && j!=i
 		}
 		if k {
 			nl = append(nl,v)
@@ -59,7 +75,7 @@ func (sl *StringList) RemoveStrings(str ...string) {
 	for _,v:=range sl.list{
 		k:=true
 		for _,j:=range(str){
-			k = k && str!=v
+			k = k && j!=v
 		}
 		if k {
 			nl = append(nl,v)
@@ -68,11 +84,12 @@ func (sl *StringList) RemoveStrings(str ...string) {
 	sl.list = nl
 }
 
-func (sl StringList) Items() []string {
+func (sl *StringList) Items() []string {
+	chat("Returning stringlist with %d items in it",len(sl.list))
 	return sl.list
 }
 
-func (sl StringList) Item(i int) string {
+func (sl *StringList) Item(i int) string {
 	if i<0 || i>=len(sl.list) {
 		return "ERROR!"
 	} else {
@@ -86,9 +103,13 @@ func (sl StringList) Count() int {
 
 
 func CreateStringList() StringList {
-	r := stringlist{}
+	r := StringList{}
 	r.list = make([]string,0)
 	return r
+}
+
+func StringListAddLast(a *StringList,v string) {
+	a.list = append(a.list,v)
 }
 
 func init() {
