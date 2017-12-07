@@ -1,3 +1,5 @@
+![JCR6](https://github.com/Tricky1975/trickyunits_go/blob/master/jcr6/JCR.png?raw=true)
+
 # A few notices on creating your own drivers
 
 I'm not fully gonna document how the compression drivers of JCR6 work in this document but I am going to put in a few pointers that can be important.
