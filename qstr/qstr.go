@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.12.05
+  version: 17.12.08
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,7 +23,10 @@ import(
     "trickyunits/mkl"
     "strconv"
     "strings"
+    "bufio"
     "sort"
+    "fmt"
+    "os"
     )
     
 
@@ -140,8 +143,21 @@ func MyTrim(a string) string{
 	return strings.Trim(a," \t\n\r\x00")
 }
 
+func RawInput(q string) string{
+    buf := bufio.NewReader(os.Stdin)
+    fmt.Print(q)
+    sentence, err := buf.ReadBytes('\n')
+    if err != nil {
+        fmt.Println(err)
+        return ""
+    } else {
+        return string(sentence)
+    }
+}
+
+
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.05")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.08")
 }
