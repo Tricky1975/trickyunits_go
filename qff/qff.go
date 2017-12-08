@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.07
+  version: 17.12.08
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,6 +24,7 @@ import (
 	"io"
 	"os"
 	"fmt"
+	"log"
 	"trickyunits/mkl"
 	"trickyunits/qerr"
 	"trickyunits/qstr"
@@ -177,8 +178,17 @@ func GetFile(filename string) []byte {
 func GetString(filename string) string {
 	return string(GetFile(filename))
 }
+
+
+func PWD() string {
+  dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+  return dir
+}
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.07")
+mkl.Version("Tricky's Go Units - qff.go","17.12.08")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
