@@ -21,6 +21,7 @@ package qff
 
 import (
 	"encoding/binary"
+	"crypto/md5"
 	"io"
 	"os"
 	"fmt"
