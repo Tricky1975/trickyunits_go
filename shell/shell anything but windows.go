@@ -22,11 +22,11 @@ package shell
   3. This notice may not be removed or altered from any source distribution.
 */
 
-import "os"
+//import "os"
 import "trickyunits/mkl"
 
 
-var shelldata = []string = {"sh","-c"}
+var shelldata []string = []string{"sh","-c"}
 
 func init(){
 mkl.Version("Tricky's Go Units - shell anything but windows.go","17.12.09")

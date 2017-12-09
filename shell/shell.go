@@ -20,8 +20,10 @@
 package shell
 
 import "os/exec"
+import "os"
+import "fmt"
 import "trickyunits/mkl"
-import "trickyunits/anistring"
+import "trickyunits/ansistring"
 import "runtime"
 
 
@@ -34,12 +36,13 @@ var Platform = runtime.GOOS
 // in order, so differences between systems can be expected
 // Especially when using Windows as that target does, unlike Mac and
 // Linux, not use a unix-approach!
-func Shell(command){
-	s:=[]string{}
-	prog:=""
-	for i,p:=range shelldata{
-		s = append(s,p)
+func Shell(command string){
+	shit:=[]string{}
+	//prog:=""
+	for _,p:=range shelldata{
+		shit = append(shit,p)
 	}
+	shit = append(shit,command)
 	cmd:= &exec.Cmd{
 		Path: shit[0],
 		Args: shit,
