@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.08
+  version: 17.12.09
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -138,11 +138,13 @@ func IsDir(filename string) bool {
 	var ret bool
 	if err != nil {
 		// handle the error and return
+		return false
 	}
 	defer file.Close()
 	fi, err := file.Stat()
 	if err != nil {
 	// handle the error and return
+		return false
 	}
 	if fi.IsDir() {
     // it's a directory
@@ -189,6 +191,6 @@ func PWD() string {
 }
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.08")
+mkl.Version("Tricky's Go Units - qff.go","17.12.09")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
