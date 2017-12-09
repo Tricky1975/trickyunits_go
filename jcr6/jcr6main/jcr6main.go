@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.07
+        Version: 17.12.10
 */
 
 package jcr6main
@@ -15,6 +15,7 @@ import (
 	//"io/ioutil"
 	"fmt"
 	_ "io"
+	"io/ioutil"
 	"os"
 	"strings"
 	"trickyunits/mkl"
@@ -65,6 +66,7 @@ type TJCR6Dir struct {
 	CFGint     map[string]int32
 	CFGbool    map[string]bool
 	CFGstr     map[string]string
+	UnixPerm   uint32
 	FAToffset  int32
 	FATsize    int
 	FATcsize   int
@@ -222,6 +224,22 @@ func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
 }
 
+// Extracts a file
+// If the unix permissions are known these will be set automatically
+// If they are not file mode 0777 will be used
+func JCR_Extract(j TJCR6Dir,entry,extractto string) {
+	b:=JCR_B(j,entry)
+	if JCR6Error { return }
+	e:=Entry(j,entry)
+	u:=e.UnixPerm
+	if u==0 { u=0777 }
+	err:=ioutil.WriteFile(extractto, b, u)
+	if err!=nil {
+		JCR6_JamErr(err.Error(),e.MainFile,entry,"JCR_Extract")
+		return
+	}
+}
+
 
 // Gives the content of a text files line by line.
 // Please note, this function has only been set up for the unix "\n" 
@@ -247,7 +265,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.07")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.10")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
