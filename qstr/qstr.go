@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.12.08
+  version: 17.12.09
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -151,7 +151,8 @@ func RawInput(q string) string{
         fmt.Println(err)
         return ""
     } else {
-        return string(sentence)
+		//fmt.Println("*"+string(sentence)+"*")
+        return MyTrim(string(sentence))
     }
 }
 
@@ -159,5 +160,5 @@ func RawInput(q string) string{
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.08")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.09")
 }
