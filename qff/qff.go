@@ -195,11 +195,13 @@ func MD5File(filename string) string{
 	// This is adapted code from the original site
 	f, err := os.Open(filename)
 	if err != nil {
+		log.Printf("MD5File(\"%s\"): Error opening file!",filename)
 		log.Fatal(err)
 	}
 	defer f.Close()
 	h := md5.New()
 	if _, err := io.Copy(h, f); err != nil {
+		log.Printf("MD5File(\"%s\"): Error reading data to hash!",filename)
 		log.Fatal(err)
 	}
 
