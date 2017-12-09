@@ -189,6 +189,22 @@ func PWD() string {
 	}
   return dir
 }
+
+func MD5File(filename string) string{
+	// This is adapted code from the original site
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		log.Fatal(err)
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
  
 func init() {
 mkl.Version("Tricky's Go Units - qff.go","17.12.09")
