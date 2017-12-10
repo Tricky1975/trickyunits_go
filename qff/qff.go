@@ -22,6 +22,7 @@ package qff
 import (
 	"encoding/binary"
 	"crypto/md5"
+	"strings"
 	"io"
 	"os"
 	"fmt"
@@ -178,10 +179,33 @@ func GetFile(filename string) []byte {
 	return ret
 }
 
+// Reads entire file as a string
 func GetString(filename string) string {
 	return string(GetFile(filename))
 }
 
+
+// Reads a text file and returns it in lines.
+// The system does try to detect the difference between a Windows
+// text files were line breaks contain both <cr> and <lf> and a unix
+// file that only has <lf>
+func GetLines(filename string) []string {
+	s:=GetString(filename)
+	// The two character line break MUST be checked first, or else the
+	// one character types will dominate everything causing faulty
+	// results.
+	if strings.Index(s,"\r\n")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n\r")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n")>=0 {
+		return strings.Split(s,"\n")
+	} else if strings.Index(s,"\r")>=0 {
+		return strings.Split(s,"\r")
+	} else {
+		return []string{s}
+	}
+}
 
 func PWD() string {
   dir, err := os.Getwd()
