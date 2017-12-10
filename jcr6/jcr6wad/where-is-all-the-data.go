@@ -95,6 +95,7 @@ for Ak:=1;Ak<=FileCount;Ak++{
 	e.Size = qff.ReadInt(BT)
 	e.Entry = strings.Replace(strings.Trim(qff.RawReadString(BT,8)," \n\x00\r\t"),"\x00","",-123)
 	e.Compressedsize = e.Size
+	e.UnixPerm = 0777
 	e.Storage = "Store"     //' WAD does not support compression, so always deal this as "Stored"
 	//'E.Encryption = 0  ' WAD does not support encryption, so always value 0
 	if SupportLevel { //' If set the system will turn DOOM levels into a folder for better usage. When unset the system will just dump everything together with not the best results, but hey, who cares :)
