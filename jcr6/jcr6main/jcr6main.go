@@ -53,6 +53,7 @@ type TJCR6Entry struct {
 	Author         string
 	Notes          string
 	Attrib         int
+	UnixPerm       int32
 	Datastring     map[string]string
 	Dataint        map[string]int
 	Databool       map[string]bool
@@ -66,7 +67,6 @@ type TJCR6Dir struct {
 	CFGint     map[string]int32
 	CFGbool    map[string]bool
 	CFGstr     map[string]string
-	UnixPerm   uint32
 	FAToffset  int32
 	FATsize    int
 	FATcsize   int
@@ -93,7 +93,18 @@ type TJCR6StorageDriver struct {
 	Unpack func(b []byte,size int) []byte
 }
 
+// Used to set the storage drivers, or compression algorithms.
+// Please only use LOWER case for this. capital letters are reserved 
+// for special reserved kinds of working like "Store" for non-compression 
+// and Brute/BRUTE to tell the JCR6 creator to try all known compression
+// methods and use the one with the best result.
+// Only for people who KNOW what they are doing!
 var JCR6StorageDrivers = make(map[string]*TJCR6StorageDriver)
+
+
+// When there was an error in the last JCR6 action, this variable will 
+// contain the error message. If nothing went wrong, this will be an 
+// empty string.
 var JCR6Error string = ""
 
 // Returns the name of the recognized file type.
@@ -169,6 +180,11 @@ func jcr6err(em string, p ...interface{}){
 	}
 }
 
+// Returns true if we have an entry and false if we don't
+func HasEntry(j TJCR6Dir,entry string) bool {
+	if _,ok:= j.Entries[entry]; ok{ return true } else {return false}
+}
+
 // Retreives all content of a JCR6 entry and unpacks it by the
 // required algorithm (if the driver for that algorithm is loaded
 // by your program that is. :P
@@ -229,13 +245,13 @@ func JCR_String(j TJCR6Dir,entry string) string {
 // If they are not file mode 0777 will be used
 func JCR_Extract(j TJCR6Dir,entry,extractto string) {
 	b:=JCR_B(j,entry)
-	if JCR6Error { return }
+	if JCR6Error!="" { return }
 	e:=Entry(j,entry)
 	u:=e.UnixPerm
 	if u==0 { u=0777 }
-	err:=ioutil.WriteFile(extractto, b, u)
+	err:=ioutil.WriteFile(extractto, b, os.FileMode(u))
 	if err!=nil {
-		JCR6_JamErr(err.Error(),e.MainFile,entry,"JCR_Extract")
+		JCR6_JamErr(err.Error(),e.Mainfile,entry,"JCR_Extract")
 		return
 	}
 }
