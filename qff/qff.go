@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.09
+  version: 17.12.10
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -234,6 +234,6 @@ func MD5File(filename string) string{
 
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.09")
+mkl.Version("Tricky's Go Units - qff.go","17.12.10")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
