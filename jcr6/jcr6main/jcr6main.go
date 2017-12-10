@@ -182,7 +182,7 @@ func jcr6err(em string, p ...interface{}){
 
 // Returns true if we have an entry and false if we don't
 func HasEntry(j TJCR6Dir,entry string) bool {
-	if _,ok:= j.Entries[entry]; ok{ return true } else {return false}
+	if _,ok:= j.Entries[strings.ToUpper(entry)]; ok{ return true } else {return false}
 }
 
 // Retreives all content of a JCR6 entry and unpacks it by the
