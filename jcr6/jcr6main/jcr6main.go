@@ -266,7 +266,7 @@ func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 }
 
 func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
-	e:="**** JCR 6 ERROR ****"
+	e:="**** JCR 6 ERROR ****\n"
 	e+="Error message: %s\n"
 	e+="Main file:     %s\n"
 	e+="Entry:         %s\n"
