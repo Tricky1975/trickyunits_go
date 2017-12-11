@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.10
+  version: 17.12.11
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -265,13 +265,13 @@ func FileMode(filename string) int{
     return int(mode)
 }
 
-func TimeStamp(filename string) int64){
+func TimeStamp(filename string) int64{
 	info,_:=os.Stat(filename)
-	stamp :=into.Time()
+	stamp :=info.ModTime()
 	return stamp.Unix()
 }
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.10")
+mkl.Version("Tricky's Go Units - qff.go","17.12.11")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
