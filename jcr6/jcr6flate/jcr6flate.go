@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.04
+        Version: 17.12.12
 */
 package jcr6flate
 
@@ -19,15 +19,15 @@ import (
 )
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6flate.go","17.12.04")
+mkl.Version("Tricky's Go Units - jcr6flate.go","17.12.12")
 mkl.Lic    ("Tricky's Go Units - jcr6flate.go","Mozilla Public License 2.0")
 	jcr6main.JCR6StorageDrivers["flate"] = &jcr6main.TJCR6StorageDriver{}
 	jcr6main.JCR6StorageDrivers["flate"].Pack = func(b []byte)[]byte{
 		var z bytes.Buffer
 		bt,err := flate.NewWriter(&z,9)
 		if err!=nil{
-			JCR6Error = "FLATE.PACK: "+err.Error()
-			return make([]byte)
+			jcr6main.JCR6Error = "FLATE.PACK: "+err.Error()
+			return make([]byte,0)
 		}
 		
 		//bt := flate.NewWriter(&z)
@@ -41,7 +41,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6flate.go","Mozilla Public License 2.0")
 		var b2 []byte = make([]byte,1)
 		z:= bytes.NewBuffer(b)
 		//bti, err := flate.NewReader(z)
-		err := flate.NewReader(z)
+		bti := flate.NewReader(z)
 		/*
 		if err!=nil{
 			jcr6main.JCR6Error = "FLATE.UNPACK: "+err.Error()
@@ -54,7 +54,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6flate.go","Mozilla Public License 2.0")
 		//fi, _ := bti.Stat()
 		r = make([]byte,size) //fi.Size())
 		for i:=0;i<size;i++{
-			_,err=bti.Read(b2)
+			_,err:=bti.Read(b2)
 			r[i]=b2[0]
 			// I know this looks pretty amateur, but reading everything 
 			// at once causes the data to be truncated, and I simply 
@@ -62,9 +62,9 @@ mkl.Lic    ("Tricky's Go Units - jcr6flate.go","Mozilla Public License 2.0")
 			// I'll try to investigate how this issue will go on
 			// other compression methods once they are being fully
 			// implemented.
-		}
-		if err!=nil && err.Error()!="EOF" {
-			jcr6main.JCR6Error = "FLATE.UNPACK.R: "+err.Error()
+			if err!=nil && err.Error()!="EOF" {
+				jcr6main.JCR6Error = "FLATE.UNPACK.R: "+err.Error()
+			}
 		}
 		bti.Close()
 		//li:=-100
