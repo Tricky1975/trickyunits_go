@@ -74,9 +74,28 @@ func RawReadString(f io.Reader, l int32) string {
 	return qstr.BA2S(ret)
 }
 
+func WriteInt32(f io.Writer,i int32) {
+	err := binary.Write(f, binary.LittleEndian, &i)
+	qerr.QERR(err)
+}
+
+
+// Reads a 32 bit int for the string length and then read the string 
+// based on that data
 func ReadString(f io.Reader) string {
 	l := ReadInt32(f)
 	return RawReadString(f, l)
+}
+
+func RawWriteString(f io.Writer, s string) {
+	ws:=[]byte(s)
+	_,err:=f.Write(ws)
+	qerr.QERR(err)
+}
+
+func WriteString(f io.Writer,s string) {
+	WriteInt32(f,int32(len(s)))
+	RawWriteString(f,s)
 }
 
 func ReadByte(r io.Reader) byte {
@@ -85,6 +104,14 @@ func ReadByte(r io.Reader) byte {
 	DEOF = err == io.EOF
 	qerr.QERR(err)
 	return buf[0]
+	
+}
+
+func WriteByte(w io.Writer,b byte){
+	buf := make([]byte,1)
+	buf[0]=b
+	_,err:=w.Write(buf)
+	qerr.QERR(err)
 }
 
 func Seek(r os.File, offs int) {
