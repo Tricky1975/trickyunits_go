@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.04
+        Version: 17.12.11
 */
 package jcr6wad
 
@@ -173,6 +173,6 @@ func init(){
 			return fetchWAD(wad,true)
 		}}
 	jcr6main.JCR6Drivers["WAD"] = a
-mkl.Version("Tricky's Go Units - where-is-all-the-data.go","17.12.04")
+mkl.Version("Tricky's Go Units - where-is-all-the-data.go","17.12.11")
 mkl.Lic    ("Tricky's Go Units - where-is-all-the-data.go","Mozilla Public License 2.0")
 }
