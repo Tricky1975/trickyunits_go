@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.10
+        Version: 17.12.11
 */
 
 package jcr6main
@@ -197,6 +197,7 @@ func JCR_B(j TJCR6Dir,entry string) []byte {
 	e  := j.Entries[en]
 	pb := make([]byte,e.Compressedsize); 
 	bt,err := os.Open(e.Mainfile)
+	defer bt.Close()
 	if err!=nil {
 		jcr6err("Error while opening resource file: %s",e.Mainfile)
 		return make([]byte,2)
@@ -281,8 +282,9 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.10")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.11")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
+	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
 			chat("File " + file + " does not exist so it cannot be JCR6!")
