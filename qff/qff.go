@@ -259,6 +259,17 @@ func MD5File(filename string) string{
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
+func FileMode(filename string) int{
+    info,_ := os.Stat(filename)
+    mode := info.Mode()
+    return int(mode)
+}
+
+func TimeStamp(filename string) int64){
+	info,_:=os.Stat(filename)
+	stamp :=into.Time()
+	return stamp.Unix()
+}
  
 func init() {
 mkl.Version("Tricky's Go Units - qff.go","17.12.10")
