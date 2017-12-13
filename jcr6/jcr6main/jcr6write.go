@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.12
+        Version: 17.12.13
 */
 package jcr6main
 
@@ -23,7 +23,7 @@ import (
 )
 
 func mklwrite(){
-mkl.Version("Tricky's Go Units - jcr6write.go","17.12.12")
+mkl.Version("Tricky's Go Units - jcr6write.go","17.12.13")
 mkl.Lic    ("Tricky's Go Units - jcr6write.go","Mozilla Public License 2.0")
 }
 
@@ -92,6 +92,7 @@ type JCR6Create struct{
 	bt         *os.File
 	mainfile   string
 	imports    []timport
+	oof        int64
 }
 
 // Configure an integer number in the config.
@@ -136,6 +137,7 @@ func (jc *JCR6Create) saveconfig(){
 		qff.WriteString(jc.bt,k)
 		qff.WriteInt32(jc.bt,v)
 	}
+	qff.WriteByte(jc.bt,255)
 }
 // This routine can be used to put an actual block of data into a JCR6
 // file as a JCR6 entry. Handy for direct data packing.
@@ -256,7 +258,10 @@ func (jc *JCR6Create) Close(){
 	qff.WriteInt32 (jc.bt,int32(len(packedfat)))
 	qff.WriteString(jc.bt,fatstore)
 	jc.bt.Write(packedfat)
-	jc.bt.Seek(6,0)
+	jc.bt.Seek(jc.oof,0)
+	//oof,_:=jc.bt.Seek(0,1);
+	//fmt.Printf("oof = %d/%d\n",oof,jc.oof) // debug line. oof should be 5 ALWAYS!
+	
 	qff.WriteInt32(jc.bt,int32(offs))
 	jc.bt.Close()
 }
@@ -294,7 +299,13 @@ func JCR_Create(file, FATstorage string) JCR6Create {
 	} else {
 		ret.bt=f
 		qff.RawWriteString(ret.bt,"JCR6\x1a")
+		oof,_ := ret.bt.Seek( 0,1 ) 
+		ret.oof = oof
+		//fmt.Printf(" oof = %d\n",ret.oof) // debug line... oof should be 5 always.
 		qff.WriteInt32(ret.bt,0) // This value will later contain the FAT offset, but that value is not yet known!
+		//toof,_ :=ret.bt.Seek(0,1)
+		//fmt.Printf("toof = %d\n",toof) // debug line... toof should be 9 always.
+		
 	}
 	return ret
 }
