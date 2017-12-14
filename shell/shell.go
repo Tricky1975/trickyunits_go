@@ -1,7 +1,7 @@
 /*
   shell.go
   
-  version: 17.12.09
+  version: 17.12.14
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -53,6 +53,9 @@ func Shell(command string){
 	} else {
 		cmd.Path = lp
 	}
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+	/*
 	o,err := cmd.Output()
 	outputstring:=fmt.Sprintf("%s",o)
 	fmt.Println(outputstring)
@@ -60,11 +63,12 @@ func Shell(command string){
 		fmt.Println(ansistring.SCol("EXECUTION ERROR!",ansistring.A_Red,ansistring.A_Blink)+"\n"+ansistring.SCol(err.Error(),ansistring.A_Yellow,0))
 		os.Exit(51)
 	}
+	* */
 }
 
 
 func init(){
-mkl.Version("Tricky's Go Units - shell.go","17.12.09")
+mkl.Version("Tricky's Go Units - shell.go","17.12.14")
 mkl.Lic    ("Tricky's Go Units - shell.go","ZLib License")
 }
 
