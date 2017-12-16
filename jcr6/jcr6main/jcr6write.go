@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.13
+        Version: 17.12.16
 */
 package jcr6main
 
@@ -23,7 +23,7 @@ import (
 )
 
 func mklwrite(){
-mkl.Version("Tricky's Go Units - jcr6write.go","17.12.13")
+mkl.Version("Tricky's Go Units - jcr6write.go","17.12.16")
 mkl.Lic    ("Tricky's Go Units - jcr6write.go","Mozilla Public License 2.0")
 }
 
@@ -41,8 +41,8 @@ func packdata(input []byte,algorithm string) ([]byte,string) {
 				retbuf = tempdat
 				retalg = dname
 			}
-		return retbuf,retalg
 		}
+		return retbuf,retalg
 	} else if algorithm=="Store" || algorithm=="" {
 		return input,"Store"
 	} else {
@@ -277,6 +277,23 @@ func (jc *JCR6Create) AddImport(file,sig string){
 
 func (jc *JCR6Create) AddRequire(file,sig string){
 	jc.addimport("REQUIRE",file,sig)
+}
+func (jc *JCR6Create) AliasFile(original,target string){
+	centryname:=strings.ToUpper(original)
+	ctarget:=strings.ToUpper(target)
+	if ent,ok:=jc.Entries[strings.ToUpper(centryname)] ; ok {
+		newalias:=TJCR6Entry{}
+		newalias.Datastring = map[string]string{}
+		newalias.Dataint = map[string]int{}
+		newalias.Databool = map[string]bool{}
+		for k,v:=range ent.Datastring { newalias.Datastring[k] = v }
+		for k,v:=range ent.Dataint    { newalias.Dataint   [k] = v }
+		for k,v:=range ent.Databool   { newalias.Databool  [k] = v }
+		newalias.Datastring["__Entry"]=target
+		jc.Entries[ctarget] = newalias
+	} else {
+		JCR6_JamErr("<jcrcreate>.AliasFile(\""+original+"\",\""+target+"\"): Original not found!",jc.mainfile,"N/A","AliasFile")
+	}
 }
 
 
