@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"strings"
 	"sort"
+	"time"
+	"fmt"
 )
 
 var mkl_versions = make(map[string]string)
@@ -75,6 +77,17 @@ func Newest() string{
 	return ret
 }
 
+
+func GenVer() string{
+	tm:=time.Now()
+	day:=fmt.Sprintf("%d",tm.Day())
+	month:=fmt.Sprintf("%d",tm.Month())
+	year:=fmt.Sprintf("%d",tm.Year())
+	if len(day)==1 { day="0"+day }
+	if len(month)==1 { month="0"+month }
+	year = year[2:]
+	return year+"."+month+"."+day
+}
 
 /* --
 mkl.Version("Tricky's Go Units - mkl.go","17.12.02")
