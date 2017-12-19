@@ -22,7 +22,7 @@ package shell
 import "os"
 import "trickyunits/mkl"
 
-var shelldata = []string = {os.Env("COMSPEC"),"/c"}
+var shelldata = []string {os.Env("COMSPEC"),"/c"}
 
 func init(){
 mkl.Version("Tricky's Go Units - shell_windows.go","17.12.09")
