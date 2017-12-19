@@ -24,6 +24,7 @@ import "os"
 import "fmt"
 import "trickyunits/mkl"
 import "trickyunits/ansistring"
+import "trickyunits/qff"
 import "runtime"
 import "path/filepath"
 
@@ -49,6 +50,9 @@ func Shell(command string){
 	cmd:= &exec.Cmd{
 		Path: shit[0],
 		Args: shit,
+	}
+	if qff.Exists("./"+cmd.Path) {
+		cmd.Path = "./"+cmd.Path
 	}
 	if lp,err:=exec.LookPath(cmd.Path); err!= nil {
 		fmt.Println(ansistring.SCol("ERROR!",ansistring.A_Red,ansistring.A_Blink)+"\n"+ansistring.SCol(err.Error(),ansistring.A_Yellow,0))
