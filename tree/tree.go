@@ -1,7 +1,7 @@
 /*
   tree.go
   
-  version: 17.12.02
+  version: 17.12.14
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,6 +23,7 @@ package tree
 import (
 	"fmt"
 	"os"
+	"strings"
 //	"path"
 	"path/filepath"
 	"trickyunits/qstr"
@@ -41,7 +42,12 @@ func GetTree(rootpath string,hidden bool) []string {
 			return nil
 		}
 		if qstr.Left(filepath.Base(path),1)!="." || hidden {
-			list = append(list, qstr.Slash(qstr.Right(path,len(path)-len(rp))))
+			ok:=true
+			tname:=qstr.Slash(qstr.Right(path,len(path)-len(rp)))
+			for _,d := range strings.Split(tname,"/") { ok=ok && (qstr.Left(d,1)!="." || hidden) }
+			if ok {
+				list = append(list, tname)
+			}
 		}
 		return nil
 	})

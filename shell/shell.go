@@ -1,7 +1,7 @@
 /*
   shell.go
   
-  version: 17.12.09
+  version: 17.12.16
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,9 +25,11 @@ import "fmt"
 import "trickyunits/mkl"
 import "trickyunits/ansistring"
 import "runtime"
+import "path/filepath"
 
 
 var Platform = runtime.GOOS
+var ShellError = ""
 
 
 // Will use the system's command shell in stead of a direct execution
@@ -38,6 +40,7 @@ var Platform = runtime.GOOS
 // Linux, not use a unix-approach!
 func Shell(command string){
 	shit:=[]string{}
+	ShellError=""
 	//prog:=""
 	for _,p:=range shelldata{
 		shit = append(shit,p)
@@ -49,10 +52,14 @@ func Shell(command string){
 	}
 	if lp,err:=exec.LookPath(cmd.Path); err!= nil {
 		fmt.Println(ansistring.SCol("ERROR!",ansistring.A_Red,ansistring.A_Blink)+"\n"+ansistring.SCol(err.Error(),ansistring.A_Yellow,0))
+		ShellError=err.Error()
 		os.Exit(50)
 	} else {
 		cmd.Path = lp
 	}
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+	/*
 	o,err := cmd.Output()
 	outputstring:=fmt.Sprintf("%s",o)
 	fmt.Println(outputstring)
@@ -60,11 +67,33 @@ func Shell(command string){
 		fmt.Println(ansistring.SCol("EXECUTION ERROR!",ansistring.A_Red,ansistring.A_Blink)+"\n"+ansistring.SCol(err.Error(),ansistring.A_Yellow,0))
 		os.Exit(51)
 	}
+	* */
 }
 
 
+func ArrayCommand(name string, argsarray []string) *exec.Cmd{
+	ShellError=""
+	shit:=[]string{}
+	shit = append(shit,name)
+	for _,a:=range argsarray { shit = append(shit,a) }
+	cmd:= &exec.Cmd{
+		Path: name,
+		Args: shit,
+	}
+	if filepath.Base(name) == name {
+		if lp, err := exec.LookPath(name); err != nil {
+			ShellError = err.Error()
+		} else {
+			cmd.Path = lp
+		}
+	}
+	return cmd
+}
+  
+
+
 func init(){
-mkl.Version("Tricky's Go Units - shell.go","17.12.09")
+mkl.Version("Tricky's Go Units - shell.go","17.12.16")
 mkl.Lic    ("Tricky's Go Units - shell.go","ZLib License")
 }
 
