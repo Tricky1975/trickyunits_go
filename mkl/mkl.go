@@ -1,7 +1,7 @@
 /*
   mkl.go
   
-  version: 17.12.02
+  version: 17.12.21
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -90,7 +90,7 @@ func GenVer() string{
 }
 
 /* --
-mkl.Version("Tricky's Go Units - mkl.go","17.12.02")
+mkl.Version("Tricky's Go Units - mkl.go","17.12.21")
 mkl.Lic    ("Tricky's Go Units - mkl.go","ZLib License")
 -- */
 

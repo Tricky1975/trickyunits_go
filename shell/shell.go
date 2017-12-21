@@ -1,7 +1,7 @@
 /*
   shell.go
   
-  version: 17.12.16
+  version: 17.12.21
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -97,7 +97,7 @@ func ArrayCommand(name string, argsarray []string) *exec.Cmd{
 
 
 func init(){
-mkl.Version("Tricky's Go Units - shell.go","17.12.16")
+mkl.Version("Tricky's Go Units - shell.go","17.12.21")
 mkl.Lic    ("Tricky's Go Units - shell.go","ZLib License")
 }
 

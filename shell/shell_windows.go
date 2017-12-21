@@ -1,7 +1,7 @@
 /*
   shell_windows.go
   
-  version: 17.12.09
+  version: 17.12.21
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,6 +25,6 @@ import "trickyunits/mkl"
 var shelldata = []string {os.Getenv("COMSPEC"),"/c"}
 
 func init(){
-mkl.Version("Tricky's Go Units - shell_windows.go","17.12.09")
+mkl.Version("Tricky's Go Units - shell_windows.go","17.12.21")
 mkl.Lic    ("Tricky's Go Units - shell_windows.go","ZLib License")
 }
