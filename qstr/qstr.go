@@ -1,7 +1,7 @@
 /*
   qstr.go
   
-  version: 17.12.09
+  version: 17.12.21
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -74,6 +74,11 @@ func Left(a string,l int) string{
 
 func Right(a string,l int) string{
 	return SubStr(a,len(a)-l,l)
+}
+
+
+func Prefixed(a,prefix string) bool {
+	return Left(a,len(prefix))==prefix
 }
 
 // returns -1 if not found at all, otherwise the position number
@@ -160,5 +165,5 @@ func RawInput(q string) string{
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.09")
+mkl.Version("Tricky's Go Units - qstr.go","17.12.21")
 }
