@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.13
+        Version: 17.12.22
 */
 
 package jcr6main
@@ -241,6 +241,26 @@ func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
 }
 
+
+func JCR_Lines(jcr TJCR6Dir,filename string) []string {
+	s:=GetString(filename)
+	// The two character line break MUST be checked first, or else the
+	// one character types will dominate everything causing faulty
+	// results.
+	if strings.Index(s,"\r\n")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n\r")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n")>=0 {
+		return strings.Split(s,"\n")
+	} else if strings.Index(s,"\r")>=0 {
+		return strings.Split(s,"\r")
+	} else {
+		return []string{s}
+	}
+}
+
+
 // Extracts a file
 // If the unix permissions are known these will be set automatically
 // If they are not file mode 0777 will be used
@@ -259,10 +279,25 @@ func JCR_Extract(j TJCR6Dir,entry,extractto string) {
 
 
 // Gives the content of a text files line by line.
-// Please note, this function has only been set up for the unix "\n" 
-// based text files and therefore it will very likely be faulty on Windows.
 func JCR_ListEntry(j TJCR6Dir,entry string) []string {
-	r:=strings.Split(JCR_String(j,entry),"\n")
+	//r:=strings.Split(JCR_String(j,entry),"\n")
+	s:=JCR_String(j,filename)
+	// The two character line break MUST be checked first, or else the
+	// one character types will dominate everything causing faulty
+	// results.
+	if strings.Index(s,"\r\n")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n\r")>=0 {
+		return strings.Split(s,"\r\n")
+	} else if strings.Index(s,"\n")>=0 {
+		return strings.Split(s,"\n")
+	} else if strings.Index(s,"\r")>=0 {
+		return strings.Split(s,"\r")
+	} else {
+		return []string{s}
+	}
+}
+
 	return r
 }
 
@@ -282,7 +317,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.13")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.22")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
