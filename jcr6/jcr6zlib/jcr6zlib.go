@@ -8,6 +8,11 @@
 	http://mozilla.org/MPL/2.0/.
         Version: 17.12.04
 */
+
+
+// zLIB compression support in JCR6
+// As this package does not add any new functions of variables you can use
+// just importing it will do the job, you will have to import this prefixed with an underscore.
 package jcr6zlib
 
 import (

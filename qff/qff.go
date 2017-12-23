@@ -275,3 +275,20 @@ func init() {
 mkl.Version("Tricky's Go Units - qff.go","17.12.11")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
+
+
+
+func WriteStringToFile(filepath, s string) error {
+	fo, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+
+	_, err = io.Copy(fo, strings.NewReader(s))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
