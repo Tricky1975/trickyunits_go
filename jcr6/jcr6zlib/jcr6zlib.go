@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.04
+        Version: 17.12.23
 */
 
 
@@ -24,7 +24,7 @@ import (
 )
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6zlib.go","17.12.04")
+mkl.Version("Tricky's Go Units - jcr6zlib.go","17.12.23")
 mkl.Lic    ("Tricky's Go Units - jcr6zlib.go","Mozilla Public License 2.0")
 	jcr6main.JCR6StorageDrivers["zlib"] = &jcr6main.TJCR6StorageDriver{}
 	jcr6main.JCR6StorageDrivers["zlib"].Pack = func(b []byte)[]byte{
