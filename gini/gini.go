@@ -387,10 +387,9 @@ func ReadFromBytes(thebytes []byte) TGINI{
 // Either being a 'text' file or 'compiled' file doesn't matter
 // this routine can autodetect that.
 func ReadFromFile(file string) TGINI{
-	var ret TGINI
 	if !qff.Exists(file) {
 		fmt.Printf("GINI file %f doesn't exist",file)
-		return ret
+		return TGINI{}
 	}
 	b:=qff.GetFile(file)
 	return ParseBytes(b)
@@ -398,7 +397,8 @@ func ReadFromFile(file string) TGINI{
 
 // This can be used when you have alternative ways to load a file (like JCR6 for example).
 // Whether these bytes form a text file or a "compiled" gini file doesn't matter, this routine will autoamtically detect it and call the correct parser.
-func ParseBytes(b []bytes) TGINI{
+func ParseBytes(b []byte) TGINI{
+	var ret TGINI
 	if string(b[:5])=="GINI\x1a" {
 		ret = ReadFromBytes(b)
 	} else {
