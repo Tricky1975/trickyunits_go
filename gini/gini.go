@@ -1,7 +1,7 @@
 /*
   gini.go
-  
-  version: 17.12.07
+  JCR6 driver for the zlib compression algorithm
+  version: 17.12.24
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -393,6 +393,12 @@ func ReadFromFile(file string) TGINI{
 		return ret
 	}
 	b:=qff.GetFile(file)
+	return ParseBytes(b)
+}
+
+// This can be used when you have alternative ways to load a file (like JCR6 for example).
+// Whether these bytes form a text file or a "compiled" gini file doesn't matter, this routine will autoamtically detect it and call the correct parser.
+func ParseBytes(b []bytes) TGINI{
 	if string(b[:5])=="GINI\x1a" {
 		ret = ReadFromBytes(b)
 	} else {
