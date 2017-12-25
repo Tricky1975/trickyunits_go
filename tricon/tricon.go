@@ -1,7 +1,7 @@
 /*
   tricon.go
   SDL Debug Console
-  version: 17.12.23
+  version: 17.12.25
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -187,7 +187,22 @@ func Kill(){
 	rend.Destroy()
 }
 
+func Pause(){
+	for {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+				case *sdl.QuitEvent:
+					return
+				case *sdl.KeyboardEvent:
+					return
+			}
+			Show()
+		}
+	}
+		//sdl.Delay(16)
+}
+
 func init(){
-mkl.Version("Tricky's Go Units - tricon.go","17.12.23")
+mkl.Version("Tricky's Go Units - tricon.go","17.12.25")
 mkl.Lic    ("Tricky's Go Units - tricon.go","ZLib License")
 }
