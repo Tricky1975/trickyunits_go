@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.22
+        Version: 17.12.26
 */
 
 package jcr6main
@@ -193,6 +193,7 @@ func JCR_B(j TJCR6Dir,entry string) []byte {
 	//var e TJCR6Entry
 	if _,ok:= j.Entries[en]; !ok{
 		jcr6err("Entry %s was not found in the requested resource.",entry)
+		return []byte{}
 	}
 	e  := j.Entries[en]
 	pb := make([]byte,e.Compressedsize); 
@@ -264,6 +265,7 @@ func JCR_Extract(j TJCR6Dir,entry,extractto string) {
 func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 	//r:=strings.Split(JCR_String(j,entry),"\n")
 	s:=JCR_String(j,entry)
+	if JCR6Error!="" { return []string{} }
 	// The two character line break MUST be checked first, or else the
 	// one character types will dominate everything causing faulty
 	// results.
@@ -280,8 +282,13 @@ func JCR_ListEntry(j TJCR6Dir,entry string) []string {
 	}
 }
 
+var AltErr func(AError,AFile,AEntry,AFunc string)
 
 func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
+	if AltErr!=nil { 
+		AltErr(AError,AFile,AEntry,AFunc)
+		return
+	}
 	e:="**** JCR 6 ERROR ****\n"
 	e+="Error message: %s\n"
 	e+="Main file:     %s\n"
@@ -297,7 +304,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.22")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.26")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
