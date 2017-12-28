@@ -1,7 +1,7 @@
 /*
   gini.go
   JCR6 driver for the zlib compression algorithm
-  version: 17.12.24
+  version: 17.12.28
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -31,6 +31,7 @@ package gini
  
 import(
 	"fmt"
+	"time"
 	"bytes"
 	"strings"
 	"trickyunits/qff"
@@ -335,6 +336,42 @@ func (g *TGINI) ReadFromBytes(b []byte){
 		}
 	} // for
 } // func
+
+
+// Converts gini data into a string you can save as a GINI file
+func (g *TGINI) ToSource() string {
+	tme:=time.Now()
+	ret:="[rem]\nGenerated file!\n\n"
+	ret+=fmt.Sprintf("Generated: %d/%d/%d",tme.Month(),tme.Day(),tme.Year())+"\n\n"
+	ret+="[vars]\n"
+	for k,v:=range g.vars{
+		ret+=k+"="+v+"\n"
+	}
+	ret+="\n\n"
+	for point,list:=range g.lists {
+		lists:=""
+		for k,p:=range g.listpointer{
+			if p==point {
+				if lists!="" { lists+="," }
+				lists+=k
+			}
+		}
+		if lists=="" {
+			fmt.Printf("ERROR! List pointer %d without references!",point)
+		} else {
+			ret+="[List:"+lists+"]\n"
+			for _,v:=range list {ret+=v+"\n"}
+			ret+="\n"
+		}
+	}
+	return ret
+}
+
+// Save as a source file (editable in text editors)
+func (g *TGINI) SaveSource(filename string) error {
+	src:=g.ToSource()
+	return qff.WriteStringToFile(filename, src)
+}
 
 // The functions below have also been translated from BlitzMax
 
