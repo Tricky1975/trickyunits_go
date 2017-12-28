@@ -1,7 +1,7 @@
 /*
   tricon.go
   SDL Debug Console
-  version: 17.12.25
+  version: 17.12.28
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,6 +23,7 @@
 package tricon
 
 import (
+	"fmt"
 	"trickyunits/mkl"
 	"trickyunits/qstr"
 	"github.com/veandco/go-sdl2/sdl"
@@ -55,6 +56,8 @@ var wh int32
 var txl []pieceoftext
 
 var white = sdl.Color{R:255,G:255,B:255,A:255}
+
+var STDoutchat = false
 
 
 
@@ -103,16 +106,21 @@ func Show() {
 		dst := sdl.Rect{tx.x, tx.y, tx.s.W, tx.s.H}	
 		rend.Copy(tx.t,&src,&dst)
 	}
-	csurf,_:=font.RenderUTF8Blended(">"+cmd+"_",white); defer csurf.Free()
-	ctext,_:=rend.CreateTextureFromSurface(csurf); defer ctext.Destroy()
+	csurf,_:=font.RenderUTF8Blended(">"+cmd+"_",white)
+	ctext,_:=rend.CreateTextureFromSurface(csurf) 
+	//defer csurf.Free()
+	//defer ctext.Destroy()
 	ctext.SetColorMod(CR,CG,CB)
 	ctsr:=sdl.Rect{0, 0, csurf.W, csurf.H}
 	cttr:=sdl.Rect{0,int32(wh)-int32(font.Height()),csurf.W,csurf.H}
 	rend.Copy(ctext,&ctsr,&cttr)
 	rend.Present()
+	csurf.Free()
+	ctext.Destroy()
 }
 
 func Write(txt string,r,g,b uint8){
+	if STDoutchat { fmt.Printf("tricon.Write(\"%s\",%d,%d,%d)\n",txt,r,g,b) }
 	i:=pieceoftext{}
 	i.x=x
 	i.y=y
@@ -203,6 +211,6 @@ func Pause(){
 }
 
 func init(){
-mkl.Version("Tricky's Go Units - tricon.go","17.12.25")
+mkl.Version("Tricky's Go Units - tricon.go","17.12.28")
 mkl.Lic    ("Tricky's Go Units - tricon.go","ZLib License")
 }
