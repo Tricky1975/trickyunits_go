@@ -70,6 +70,7 @@ func ReadInt64(f io.Reader) int64 {
 }
 
 func RawReadString(f io.Reader, l int32) string {
+	if l<0 { fmt.Printf("WARNING! Negative len poped up: %d \n",l); return "" }
 	ret := make([]byte, l)
 	_, err := f.Read(ret)
 	DEOF = err == io.EOF
