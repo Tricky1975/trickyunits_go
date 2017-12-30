@@ -1,7 +1,7 @@
 /*
   gini.go
   JCR6 driver for the zlib compression algorithm
-  version: 17.12.29
+  version: 17.12.30
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -121,6 +121,14 @@ func (g *TGINI) ListExists(list string) bool {
 		return true
 	}
 	return false
+}
+
+// Returns the string at the given index.
+// If out of bounds an empty string is returned
+func (g *TGINI) ListIndex(list string,idx int) string {
+	l:=g.List(list)
+	if idx<0 || idx>=len(l) { return "" }
+	return l[idx]
 }
 
 // Duplicates the pointer of a list to a new list name
