@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.23
+  version: 17.12.30
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,9 +24,11 @@ import (
 	"crypto/md5"
 	"strings"
 	"io"
+	"io/ioutil"
 	"os"
 	"fmt"
 	"log"
+	"errors"
 	"trickyunits/mkl"
 	"trickyunits/qerr"
 	"trickyunits/qstr"
@@ -272,7 +274,7 @@ func TimeStamp(filename string) int64{
 }
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.23")
+mkl.Version("Tricky's Go Units - qff.go","17.12.30")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
 
@@ -291,4 +293,34 @@ func WriteStringToFile(filepath, s string) error {
 	}
 
 	return nil
+}
+
+
+
+// Gets directory and returns it as a listed string
+// if t==0 everything
+// if t==1 only files
+// if t==2 only directories
+// Hidden is only read in unix style, so a file being prefixed with a "." or not. If false, hidden files are filtered out!
+func GetDir(dir string, t byte, hidden bool) ([]string,error) {
+	if t>2 { return []string{},errors.New("Invalid search type") }
+	d := strings.Replace(dir,"\\","/",-2)
+	files, err := ioutil.ReadDir(d)
+	if err != nil {
+		return []string{},err
+	}
+	
+	ret:=[]string{}
+	for _, ifile := range files {
+		file:=ifile.Name()
+		//fmt.Println(file.Name())
+		if hidden || qstr.Left(file,1)!="." {
+			switch t{
+				case 0: ret=append(ret,file)
+				case 1: if !ifile.IsDir() { ret=append(ret,file) }
+				case 2: if  ifile.IsDir() { ret=append(ret,file) }
+			}
+		}
+	}
+	return ret,nil
 }
