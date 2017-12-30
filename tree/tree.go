@@ -1,7 +1,7 @@
 /*
   tree.go
   
-  version: 17.12.14
+  version: 17.12.30
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -27,6 +27,7 @@ import (
 //	"path"
 	"path/filepath"
 	"trickyunits/qstr"
+	"trickyunits/mkl"
 )
 
 func GetTree(rootpath string,hidden bool) []string {
@@ -57,3 +58,7 @@ func GetTree(rootpath string,hidden bool) []string {
 	return list
 }
 
+func init(){
+mkl.Version("Tricky's Go Units - tree.go","17.12.30")
+mkl.Lic    ("Tricky's Go Units - tree.go","ZLib License")
+}
