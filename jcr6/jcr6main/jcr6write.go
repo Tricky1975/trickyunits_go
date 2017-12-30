@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.16
+        Version: 17.12.30
 */
 package jcr6main
 
@@ -23,7 +23,7 @@ import (
 )
 
 func mklwrite(){
-mkl.Version("Tricky's Go Units - jcr6write.go","17.12.16")
+mkl.Version("Tricky's Go Units - jcr6write.go","17.12.30")
 mkl.Lic    ("Tricky's Go Units - jcr6write.go","Mozilla Public License 2.0")
 }
 
@@ -197,6 +197,9 @@ func (jc *JCR6Create) AddComment(name, comment string){
 // Without it a JCR6 file is 100% useless! (trying to read it will result into an error).
 // This function does need a swap file!
 func (jc *JCR6Create) Close(){
+	if (!jc.First){
+		jc.saveconfig()
+	}
 	offs,_:=jc.bt.Seek(0,1)
 	//workdir:=dirry.Dirry("$AppSupport$/$LinuxDot$JCR6G/Create")
 	workbas:=jc.mainfile

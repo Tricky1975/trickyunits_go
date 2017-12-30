@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.26
+        Version: 17.12.30
 */
 
 package jcr6main
@@ -304,7 +304,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.26")
+mkl.Version("Tricky's Go Units - jcr6main.go","17.12.30")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
@@ -379,7 +379,7 @@ mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 				ret.CFGint[Tag] = qff.ReadInt32(bt)
 			case 255:
 			default:
-				JCR6Error = fmt.Sprintf("Invalid config tag (%d)",TTag)
+				JCR6Error = fmt.Sprintf("Invalid config tag (%d) %s",TTag,file)
 				bt.Close()
 				return ret
 			}
