@@ -83,7 +83,7 @@ func Prefixed(a,prefix string) bool {
 
 
 func Suffixed(a,suffix string) bool {
-	return Reft(a,len(suffix))==suffix
+	return Right(a,len(suffix))==suffix
 }
 
 // returns -1 if not found at all, otherwise the position number
