@@ -1,7 +1,7 @@
 /*
   qff.go
   
-  version: 17.12.30
+  version: 17.12.31
   Copyright (C) 2017 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -275,7 +275,7 @@ func TimeStamp(filename string) int64{
 }
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.30")
+mkl.Version("Tricky's Go Units - qff.go","17.12.31")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
 
@@ -324,4 +324,66 @@ func GetDir(dir string, t byte, hidden bool) ([]string,error) {
 		}
 	}
 	return ret,nil
+}
+
+// CopyFile copies a file from src to dst. If src and dst files exist, and are
+// the same, then return success. Otherise, attempt to create a hard link
+// between the two files. If that fail, copy the file contents from src to dst.
+// Source: https://stackoverflow.com/questions/21060945/simple-way-to-copy-a-file-in-golang
+// By; markc
+func CopyFile(src, dst string) (err error) {
+    sfi, err := os.Stat(src)
+    if err != nil {
+        return
+    }
+    if !sfi.Mode().IsRegular() {
+        // cannot copy non-regular files (e.g., directories,
+        // symlinks, devices, etc.)
+        return fmt.Errorf("CopyFile: non-regular source file %s (%q)", sfi.Name(), sfi.Mode().String())
+    }
+    dfi, err := os.Stat(dst)
+    if err != nil {
+        if !os.IsNotExist(err) {
+            return
+        }
+    } else {
+        if !(dfi.Mode().IsRegular()) {
+            return fmt.Errorf("CopyFile: non-regular destination file %s (%q)", dfi.Name(), dfi.Mode().String())
+        }
+        if os.SameFile(sfi, dfi) {
+            return
+        }
+    }
+    if err = os.Link(src, dst); err == nil {
+        return
+    }
+    err = copyFileContents(src, dst)
+    return
+}
+
+// copyFileContents copies the contents of the file named src to the file named
+// by dst. The file will be created if it does not already exist. If the
+// destination file exists, all it's contents will be replaced by the contents
+// of the source file.
+func copyFileContents(src, dst string) (err error) {
+    in, err := os.Open(src)
+    if err != nil {
+        return
+    }
+    defer in.Close()
+    out, err := os.Create(dst)
+    if err != nil {
+        return
+    }
+    defer func() {
+        cerr := out.Close()
+        if err == nil {
+            err = cerr
+        }
+    }()
+    if _, err = io.Copy(out, in); err != nil {
+        return
+    }
+    err = out.Sync()
+    return
 }
