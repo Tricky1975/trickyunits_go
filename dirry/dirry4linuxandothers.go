@@ -44,6 +44,6 @@ predata["AppDir"]     = filepath.Dir(os.Args[0])
 predata["AppFile"]    = filepath.Dir(os.Args[0])
 predata["LinuxDot"]   = "."
 predata["Home"]       = os.Getenv("HOME")
-predata["User"]       = os.Getent("USER")
+predata["User"]       = os.Getenv("USER")
 
 }
