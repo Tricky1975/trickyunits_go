@@ -1,12 +1,12 @@
 /*
         jcr6main.go
-	(c) 2017 Jeroen Petrus Broks.
+	(c) 2017, 2018 Jeroen Petrus Broks.
 	
 	This Source Code Form is subject to the terms of the 
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.30
+        Version: 18.01.05
 */
 
 package jcr6main
@@ -237,6 +237,33 @@ func PatchFile(jo *TJCR6Dir,patch string) bool{
 	
 }
 
+func PatchToPath(jo* TJCR6Dir,ji TJCR6Dir,path string){
+	p:=path
+	p=strings.Replace(p,"\\","/",-1)
+	if qstr.Right(p,1)!="/" { p+="/" }
+	for k,e := range ji.Entries{
+		e.Entry=p+e.Entry
+		jo.Entries[strings.ToUpper(p)+k]=e
+	}
+	for k,e := range ji.Comments{
+		jo.Comments[k]=e
+	}
+}
+
+func PatchFileToPath(jo *TJCR6Dir, patch,path string) bool{
+	ji:=Dir(patch)
+	if JCR6Error=="" { 
+		PatchToPath(jo,ji,path) 
+		return true
+	} else {
+		if impdebug {
+			fmt.Println("ERROR IN PATCHING:\n\t= "+JCR6Error)
+		}
+		return false
+	}
+	
+}
+
 // Basically the same as JCR_B, but now returns all data as one big string
 func JCR_String(j TJCR6Dir,entry string) string {
 	return string(JCR_B(j,entry))
@@ -304,7 +331,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","17.12.30")
+mkl.Version("Tricky's Go Units - jcr6main.go","18.01.05")
 mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {

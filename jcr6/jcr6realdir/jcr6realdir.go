@@ -1,12 +1,12 @@
 /*
         jcr6realdir.go
-	(c) 2017 Jeroen Petrus Broks.
+	(c) 2017, 2018 Jeroen Petrus Broks.
 	
 	This Source Code Form is subject to the terms of the 
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.03
+        Version: 18.01.05
 */
 
 
@@ -28,6 +28,11 @@ import "trickyunits/qstr"
 import "trickyunits/tree"
 import "trickyunits/mkl"
 import "strings"
+
+
+
+// If set to false this driver will not automatically patch JCR6 (or other recognized file types as they are found).
+var RealDirAutoPatch = true
 
 
 func init(){
@@ -55,21 +60,25 @@ jcr6main.JCR6Drivers["Real Dir"].Dir = func(file string) jcr6main.TJCR6Dir {
 		dp += "/"
 	}
 	for _,f := range d {
-		s:=qff.FileSize(dp+f)
-		newentry := jcr6main.TJCR6Entry{}
-		newentry.Entry = f
-		newentry.Mainfile = dp + f
-		newentry.Storage = "Store"
-		newentry.Offset  = 0
-		newentry.Compressedsize = s
-		newentry.Size = s
-		centry := strings.ToUpper(f)
-		ret.Entries[centry]=newentry
+		if RealDirAutoPatch && jcr6main.Recognize(dp+f)!="NONE" {
+			jcr6main.PatchFileToPath(&ret,dp+f,f)
+		} else {
+			s:=qff.FileSize(dp+f)
+			newentry := jcr6main.TJCR6Entry{}
+			newentry.Entry = f
+			newentry.Mainfile = dp + f
+			newentry.Storage = "Store"
+			newentry.Offset  = 0
+			newentry.Compressedsize = s
+			newentry.Size = s
+			centry := strings.ToUpper(f)
+			ret.Entries[centry]=newentry
+		}
 	}
 	return ret
 }
 
-mkl.Version("Tricky's Go Units - jcr6realdir.go","17.12.03")
+mkl.Version("Tricky's Go Units - jcr6realdir.go","18.01.05")
 mkl.Lic    ("Tricky's Go Units - jcr6realdir.go","Mozilla Public License 2.0")
 
 }
