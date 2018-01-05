@@ -1,8 +1,8 @@
 /*
   qstr.go
   
-  version: 17.12.31
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.01
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -78,11 +78,13 @@ func Right(a string,l int) string{
 
 
 func Prefixed(a,prefix string) bool {
+	if len(a)<len(prefix) { return false }
 	return Left(a,len(prefix))==prefix
 }
 
 
 func Suffixed(a,suffix string) bool {
+	if len(a)<len(suffix) { return false }
 	return Right(a,len(suffix))==suffix
 }
 
@@ -170,5 +172,5 @@ func RawInput(q string) string{
 
 func init(){
 mkl.Lic    ("Tricky's Go Units - qstr.go","ZLib License")
-mkl.Version("Tricky's Go Units - qstr.go","17.12.31")
+mkl.Version("Tricky's Go Units - qstr.go","18.01.01")
 }
