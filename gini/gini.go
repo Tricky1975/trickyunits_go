@@ -1,8 +1,8 @@
 /*
   gini.go
   JCR6 driver for the zlib compression algorithm
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.24
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -32,6 +32,7 @@ package gini
 import(
 	"fmt"
 	"time"
+	"sort"
 	"bytes"
 	"strings"
 	"trickyunits/qff"
@@ -359,9 +360,13 @@ func (g *TGINI) ToSource() string {
 	ret:="[rem]\nGenerated file!\n\n"
 	ret+=fmt.Sprintf("Generated: %d/%d/%d",tme.Month(),tme.Day(),tme.Year())+"\n\n"
 	ret+="[vars]\n"
+	tret:=[]string{}
 	for k,v:=range g.vars{
-		ret+=k+"="+v+"\n"
+		//ret+=k+"="+v+"\n"
+		tret=append(tret,k+"="+v)
 	}
+	sort.Strings(tret)
+	for _,l:=range(tret) { ret+=l+"\n" }
 	ret+="\n\n"
 	for point,list:=range g.lists {
 		lists:=""
