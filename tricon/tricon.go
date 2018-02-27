@@ -18,6 +18,17 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+    TriCon is in this form deprecated. 
+    It's too unpredictable how some instability issues within the SDL library are to be in the future, which Tricon heavily suffered from.
+    And now I'm also dealing with some security issues within Go, making the future even more unpredictable.
+    So for the time being TriCon will be out of use any due to some focus on the LOVE engine in the mean time, and there's no telling if this will be permanent or not.
+    If I ever get the game activity back to Go, it's uncertain if I'll use SDL or an other engine, and I deem it also likely I'll need to rewrite this from scratch anyway due to the many updates that can take place in the meantime.
+
+    And that's why this has been deprecated as of March 2018, and will be removed somewhere after July 2018, thank you.
+*/
+
+
 // Tricon is just a very simplistic graphic debug console.
 // It uses veandco's SDL library, also meaning that on Mac it can only be used fully set up Application bundles.
 package tricon
