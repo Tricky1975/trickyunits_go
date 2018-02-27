@@ -1,8 +1,8 @@
 /*
   ansistring.go
   
-  version: 17.12.02
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.02.27
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -53,7 +53,7 @@ import(
 var ANSI_Use bool = true
 func init(){
 
-mkl.Version("Tricky's Go Units - ansistring.go","17.12.02")
+mkl.Version("Tricky's Go Units - ansistring.go","18.02.27")
 mkl.Lic    ("Tricky's Go Units - ansistring.go","ZLib License")
 
 	/*Rem
@@ -117,14 +117,14 @@ func IAC(d1,d2,d3 int) string{
 	if ANSI_Use{
 		//return fmt.Sprintf("\x1b[%d;%d;%d%s%s\x1b[0m",d1,d2,d3,"m",s) //"\x1b["+d1+";"+d2+";"+d3+"m"+s+Chr(27)+"[0m"
 		ret:="\x1b"
-		ret = ret + fmt.Sprintf("%d;%d;%d",d1,d2,d3)
+		ret = ret + fmt.Sprintf("[%d;%d;%d",d1,d2,d3) + "m"
 		return ret
 	} else {
 		return ""
 	}
 } //func
 	
-func ICol(c1,c2,flags int){
+func ICol(c1,c2,flags int) string{
 	return IAC(flags,c1+30,c2+40)
 }
 
