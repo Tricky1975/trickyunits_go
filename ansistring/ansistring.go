@@ -113,6 +113,29 @@ func Col( s string, c1 int, c2 int, flags int) string{
 } //func
 
 
+func IAC(d1,d2,d3 int) string{
+	if ANSI_Use{
+		//return fmt.Sprintf("\x1b[%d;%d;%d%s%s\x1b[0m",d1,d2,d3,"m",s) //"\x1b["+d1+";"+d2+";"+d3+"m"+s+Chr(27)+"[0m"
+		ret:="\x1b"
+		ret = ret + fmt.Sprintf("%d;%d;%d",d1,d2,d3)
+		return ret
+	} else {
+		return ""
+	}
+} //func
+	
+func ICol(c1,c2,flags int){
+	return IAC(flags,c1+30,c2+40)
+}
+
+func ANUL() string {
+	ret:=""
+	if ANSI_Use{
+		ret="\x1b[0m"
+	}
+	return ret
+}
+
 /*Rem
 bbdoc: Print with only one color
 returns: The worked out string
