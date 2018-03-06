@@ -1,8 +1,8 @@
 /*
   tricon.go
   SDL Debug Console
-  version: 17.12.28
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.02.27
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -222,6 +222,6 @@ func Pause(){
 }
 
 func init(){
-mkl.Version("Tricky's Go Units - tricon.go","17.12.28")
+mkl.Version("Tricky's Go Units - tricon.go","18.02.27")
 mkl.Lic    ("Tricky's Go Units - tricon.go","ZLib License")
 }
