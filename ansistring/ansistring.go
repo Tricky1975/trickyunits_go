@@ -124,7 +124,7 @@ func IAC(d1,d2,d3 int) string{
 	}
 } //func
 	
-func ICol(c1,c2,flags int){
+func ICol(c1,c2,flags int) string{
 	return IAC(flags,c1+30,c2+40)
 }
 

@@ -171,6 +171,10 @@ func (jc *JCR6Create) AddData(data []byte,entryname,algorithm string,filemode in
 	return int32(written),storage
 }
 
+func(jc *JCR6Create) AddString(str string,entryname,algorithm string,filemode int32,timestamp int64,author, notes string) (int32,string){
+	r1,r2:=AddData([]byte(str),entryname,algorithm string,filemode int32,timestamp int64,author, notes string)
+	return r1,r2
+}
 
 // Adds a file into the JCR6
 // Returns size,compressedsize,storage algorithm
