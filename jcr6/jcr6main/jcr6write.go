@@ -172,7 +172,7 @@ func (jc *JCR6Create) AddData(data []byte,entryname,algorithm string,filemode in
 }
 
 func(jc *JCR6Create) AddString(str string,entryname,algorithm string,filemode int32,timestamp int64,author, notes string) (int32,string){
-	r1,r2:=AddData([]byte(str),entryname,algorithm string,filemode int32,timestamp int64,author, notes string)
+	r1,r2:=jc.AddData([]byte(str),entryname,algorithm ,filemode ,timestamp ,author, notes)
 	return r1,r2
 }
 
