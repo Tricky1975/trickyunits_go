@@ -1,12 +1,12 @@
 /*
         jcr6write.go
-	(c) 2017 Jeroen Petrus Broks.
+	(c) 2017, 2018 Jeroen Petrus Broks.
 	
 	This Source Code Form is subject to the terms of the 
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 17.12.30
+        Version: 18.04.18
 */
 package jcr6main
 
@@ -23,7 +23,7 @@ import (
 )
 
 func mklwrite(){
-mkl.Version("Tricky's Go Units - jcr6write.go","17.12.30")
+mkl.Version("Tricky's Go Units - jcr6write.go","18.04.18")
 mkl.Lic    ("Tricky's Go Units - jcr6write.go","Mozilla Public License 2.0")
 }
 
