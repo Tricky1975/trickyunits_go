@@ -1,7 +1,7 @@
 /*
   ansistring.go
   
-  version: 18.02.27
+  version: 18.04.18
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -53,7 +53,7 @@ import(
 var ANSI_Use bool = true
 func init(){
 
-mkl.Version("Tricky's Go Units - ansistring.go","18.02.27")
+mkl.Version("Tricky's Go Units - ansistring.go","18.04.18")
 mkl.Lic    ("Tricky's Go Units - ansistring.go","ZLib License")
 
 	/*Rem
@@ -135,6 +135,21 @@ func ANUL() string {
 	}
 	return ret
 }
+
+
+func ISCol(col int,flags int)string{
+	if ANSI_Use{
+		//return fmt.Sprintf("\x1b[%d,%dm$m\x1b[0m",flags,col,s)   // "\x1b["+flags+";"+Int(col+30)+"m"+s+Chr(27)+"[0m"
+		ret := "\x1b["
+		ret = ret + fmt.Sprintf("%d;%d",flags,col+30)
+		ret = ret + "m"//+s
+		//cd ret = ret + "\x1b[0m"
+		return ret
+	} else {
+		return ""
+	}
+} //func
+
 
 /*Rem
 bbdoc: Print with only one color
