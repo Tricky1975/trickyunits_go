@@ -1,8 +1,8 @@
 /*
   qff.go
   
-  version: 17.12.31
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.06.12
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -209,6 +209,17 @@ func GetFile(filename string) []byte {
 	return ret
 }
 
+func MergeFiles(source1,source2,target string) error {
+	s1:=GetFile(source1)
+	s2:=GetFile(source2)
+	out, err := os.Create(target)
+	defer out.Close()
+	if err!=nil { return err }
+	out.Write(s1)
+	out.Write(s2)
+	return nil
+}
+
 // Reads entire file as a string
 func GetString(filename string) string {
 	return string(GetFile(filename))
@@ -275,7 +286,7 @@ func TimeStamp(filename string) int64{
 }
  
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","17.12.31")
+mkl.Version("Tricky's Go Units - qff.go","18.06.12")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
 
