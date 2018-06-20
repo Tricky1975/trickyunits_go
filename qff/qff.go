@@ -1,6 +1,6 @@
 /*
   qff.go
-  
+
   version: 18.06.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
@@ -83,7 +83,7 @@ func WriteInt32(f io.Writer,i int32) {
 }
 
 
-// Reads a 32 bit int for the string length and then read the string 
+// Reads a 32 bit int for the string length and then read the string
 // based on that data
 func ReadString(f io.Reader) string {
 	l := ReadInt32(f)
@@ -107,7 +107,7 @@ func ReadByte(r io.Reader) byte {
 	DEOF = err == io.EOF
 	qerr.QERR(err)
 	return buf[0]
-	
+
 }
 
 func WriteByte(w io.Writer,b byte){
@@ -190,7 +190,7 @@ func IsDir(filename string) bool {
 
 func GetFile(filename string) []byte {
 	// Please note... this is not the fastest, but it is the most stable.
-	// Files longer than 32767 bytes have shown to get truncated only loading 
+	// Files longer than 32767 bytes have shown to get truncated only loading
 	// zero-characters after offset 32767 and I simply cannot risk that.
 	// Rather a slow routine that works, than a fast one showing trouble.
 	size:=FileSize(filename)
@@ -209,6 +209,27 @@ func GetFile(filename string) []byte {
 	return ret
 }
 
+func EGetFile(filename string) ([]byte,error) {
+	// Please note... this is not the fastest, but it is the most stable.
+	// Files longer than 32767 bytes have shown to get truncated only loading
+	// zero-characters after offset 32767 and I simply cannot risk that.
+	// Rather a slow routine that works, than a fast one showing trouble.
+	size:=FileSize(filename)
+	bt,err:=os.Open(filename)
+	defer bt.Close()
+	if err!=nil{
+		fmt.Printf("ERROR!\nGetFile(\"%s\"): %s\n\n",filename,err.Error())
+		return make([]byte,size),err
+	}
+	ret:=make([]byte,size)
+	b:=make([]byte,1)
+	for i:=0;i<size;i++{
+		bt.Read(b)
+		ret[i]=b[0]
+	}
+	return ret,err
+}
+
 func MergeFiles(source1,source2,target string) error {
 	s1:=GetFile(source1)
 	s2:=GetFile(source2)
@@ -225,6 +246,10 @@ func GetString(filename string) string {
 	return string(GetFile(filename))
 }
 
+func EGetString(filename string) (string,error) {
+	r,e:= EGetFile(filename)
+	return string(r),e
+}
 
 // Reads a text file and returns it in lines.
 // The system does try to detect the difference between a Windows
@@ -284,7 +309,7 @@ func TimeStamp(filename string) int64{
 	stamp :=info.ModTime()
 	return stamp.Unix()
 }
- 
+
 func init() {
 mkl.Version("Tricky's Go Units - qff.go","18.06.12")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
@@ -321,7 +346,7 @@ func GetDir(dir string, t byte, hidden bool) ([]string,error) {
 	if err != nil {
 		return []string{},err
 	}
-	
+
 	ret:=[]string{}
 	for _, ifile := range files {
 		file:=ifile.Name()
