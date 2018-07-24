@@ -1,7 +1,7 @@
 /*
   quint.go
-
-  version: 18.06.12
+  
+  version: 18.07.24
   Copyright (C) 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -55,7 +55,7 @@ func BytesToInt64(b []byte) (int64,error){
   if err != nil {
      return 0,err
   }
-  return 0,nil
+  return v,nil
 }
 
 func BytesToInt32(b []byte) (int32,error){
@@ -65,7 +65,7 @@ func BytesToInt32(b []byte) (int32,error){
   if err != nil {
      return 0,err
   }
-  return 0,nil
+  return v,nil
 }
 
 
@@ -81,11 +81,11 @@ func FloatToBytes(num float64) ([]byte,error){
 }
 
 func BytesToFloat(b []byte) (float64,error){
-    v := int64(0)
+    v := float64(0)
   buf := bytes.NewReader(b)
   err := binary.Read(buf, binary.LittleEndian, &v)
   if err != nil {
      return 0,err
   }
-  return 0,nil
+  return v,nil
 }
