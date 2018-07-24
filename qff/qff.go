@@ -1,7 +1,7 @@
 /*
   qff.go
-
-  version: 18.06.12
+  
+  version: 18.07.24
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -188,6 +188,29 @@ func IsDir(filename string) bool {
 	return ret
 }
 
+func IsFile(filename string) bool {
+	file, err := os.Open(filename)
+	var ret bool
+	if err != nil {
+		// handle the error and return
+		return false
+	}
+	defer file.Close()
+	fi, err := file.Stat()
+	if err != nil {
+	// handle the error and return
+		return false
+	}
+	if fi.IsDir() {
+    // it's a directory
+		ret = true
+	} else {
+		// it's not a directory
+		ret = false
+	}
+	return ret
+}
+
 func GetFile(filename string) []byte {
 	// Please note... this is not the fastest, but it is the most stable.
 	// Files longer than 32767 bytes have shown to get truncated only loading
@@ -218,8 +241,8 @@ func EGetFile(filename string) ([]byte,error) {
 	bt,err:=os.Open(filename)
 	defer bt.Close()
 	if err!=nil{
-		fmt.Printf("ERROR!\nGetFile(\"%s\"): %s\n\n",filename,err.Error())
-		return make([]byte,size),err
+		//fmt.Printf("ERROR!\nGetFile(\"%s\"): %s\n\n",filename,err.Error())
+		return []byte{},err
 	}
 	ret:=make([]byte,size)
 	b:=make([]byte,1)
@@ -311,7 +334,7 @@ func TimeStamp(filename string) int64{
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - qff.go","18.06.12")
+mkl.Version("Tricky's Go Units - qff.go","18.07.24")
 mkl.Lic    ("Tricky's Go Units - qff.go","ZLib License")
 }
 
