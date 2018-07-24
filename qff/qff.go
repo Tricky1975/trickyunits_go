@@ -201,7 +201,7 @@ func IsFile(filename string) bool {
 	// handle the error and return
 		return false
 	}
-	if fi.IsDir() {
+	if fi.Mode().IsRegular() {
     // it's a directory
 		ret = true
 	} else {
