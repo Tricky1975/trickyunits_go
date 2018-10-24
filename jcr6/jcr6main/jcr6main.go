@@ -1,3 +1,13 @@
+// License Information:
+//         jcr6main.go
+// 	(c) 2017, 2018 Jeroen Petrus Broks.
+// 	
+// 	This Source Code Form is subject to the terms of the 
+// 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
+// 	distributed with this file, You can obtain one at 
+// 	http://mozilla.org/MPL/2.0/.
+//         Version: 18.10.24
+// End License Information
 /*
         jcr6main.go
 	(c) 2017, 2018 Jeroen Petrus Broks.
@@ -124,6 +134,7 @@ func Recognize(file string) string {
 // Returns the directory of a JCR6 file or a file recognised as such
 func Dir(file string) TJCR6Dir {
 	t := Recognize(file)
+	if _,ok:=JCR6Drivers[t];!ok { fmt.Println("Unrecognized work type: "+t); }
 	return JCR6Drivers[t].Dir(file)
 }
 
@@ -331,8 +342,8 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-mkl.Version("Tricky's Go Units - jcr6main.go","18.06.12")
-mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
+	mkl.Version("Tricky's Go Units - jcr6main.go","18.10.24")
+	mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
 		if !qff.Exists(file) {
