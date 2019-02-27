@@ -1,12 +1,12 @@
 // License Information:
 //         jcr6main.go
-// 	(c) 2017, 2018 Jeroen Petrus Broks.
+// 	(c) 2017, 2018, 2019 Jeroen Petrus Broks.
 // 	
 // 	This Source Code Form is subject to the terms of the 
 // 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 // 	distributed with this file, You can obtain one at 
 // 	http://mozilla.org/MPL/2.0/.
-//         Version: 18.10.24
+//         Version: 19.02.27
 // End License Information
 /*
         jcr6main.go
@@ -342,7 +342,7 @@ func JCR6_JamErr(AError string,AFile string,AEntry string,AFunc string) {
 }
 
 func init() {
-	mkl.Version("Tricky's Go Units - jcr6main.go","18.10.24")
+	mkl.Version("Tricky's Go Units - jcr6main.go","19.02.27")
 	mkl.Lic    ("Tricky's Go Units - jcr6main.go","Mozilla Public License 2.0")
 	mklwrite()
 	JCR6Drivers["JCR6"] = &TJCR6Driver{"JCR6", func(file string) bool {
@@ -588,7 +588,8 @@ func init() {
 
 				}
 			default:
-				JCR6Error = fmt.Sprintf("Unknown main tag %d", mtag)
+				mp,_:=bt.Seek(0,1)
+				JCR6Error = fmt.Sprintf("Unknown main tag %d (%d)", mtag,mp)
 				bt.Close()
 				return ret
 			}
