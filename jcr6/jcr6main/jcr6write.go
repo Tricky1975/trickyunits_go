@@ -11,7 +11,7 @@
 package jcr6main
 
 import (
-	"log"
+//	"log" // toxic!
 	"fmt"
 //	"io"
 	"os"
@@ -47,7 +47,7 @@ func packdata(input []byte,algorithm string) ([]byte,string) {
 		return input,"Store"
 	} else {
 		if strings.ToLower(algorithm)!=algorithm {
-			log.Print("WARNING! Capital letters found in algorthm name ",algorithm,"\nI'll try to pack, but be aware of possible conflicts in future versions of JCR6")
+			fmt.Println("WARNING! Capital letters found in algorthm name ",algorithm,"\nI'll try to pack, but be aware of possible conflicts in future versions of JCR6")
 		}
 		// Pack the data with the wanted driver
 		if driver,ok:=JCR6StorageDrivers[algorithm];ok {
@@ -65,7 +65,7 @@ func packdata(input []byte,algorithm string) ([]byte,string) {
 	}
 	// Nothing imprinted here should be possible, if it still happens 
 	// a warning will show and the data will be returned as "Store"
-	log.Print("WARNING! Something went wrong during the packing sequence! This can only be due to a serious bug! I'll return the data as 'Store'")
+	fmt.Println("WARNING! Something went wrong during the packing sequence! This can only be due to a serious bug! I'll return the data as 'Store'")
 	return input,"Store"
 	
 }
