@@ -1,13 +1,13 @@
-/*
-        jcr6write.go
-	(c) 2017, 2018 Jeroen Petrus Broks.
-	
-	This Source Code Form is subject to the terms of the 
-	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
-	distributed with this file, You can obtain one at 
-	http://mozilla.org/MPL/2.0/.
-        Version: 18.04.18
-*/
+// License Information:
+//         jcr6write.go
+// 	(c) 2017, 2018, 2019 Jeroen Petrus Broks.
+// 	
+// 	This Source Code Form is subject to the terms of the 
+// 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
+// 	distributed with this file, You can obtain one at 
+// 	http://mozilla.org/MPL/2.0/.
+//         Version: 19.02.28
+// End License Information
 package jcr6main
 
 import (
@@ -23,7 +23,7 @@ import (
 )
 
 func mklwrite(){
-mkl.Version("Tricky's Go Units - jcr6write.go","18.04.18")
+mkl.Version("Tricky's Go Units - jcr6write.go","19.02.28")
 mkl.Lic    ("Tricky's Go Units - jcr6write.go","Mozilla Public License 2.0")
 }
 
@@ -265,6 +265,11 @@ func (jc *JCR6Create) Close(){
 	qff.WriteInt32 (jc.bt,int32(len(packedfat)))
 	qff.WriteString(jc.bt,fatstore)
 	jc.bt.Write(packedfat)
+	// This footer is for a future feature in JCR6
+	footpos,_:=jc.bt.Seek(0,1);	
+	qff.RawWriteString(jc.bt,"JCR6");
+	qff.WriteInt32 (jc.bt,int32(footpos+8))
+	// Tell JCR6 where to find the File table
 	jc.bt.Seek(jc.oof,0)
 	//oof,_:=jc.bt.Seek(0,1);
 	//fmt.Printf("oof = %d/%d\n",oof,jc.oof) // debug line. oof should be 5 ALWAYS!
