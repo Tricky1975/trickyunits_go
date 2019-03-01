@@ -1,7 +1,7 @@
 // License Information:
 //   Jeroen's eXtremely Simplistic Repeatative Character Compression Algorithm.go
 //   JCR6 -- Jeroen's eXtremely Simplistic Repeatative Character Compression Algorithm
-//   version: 19.02.28
+//   version: 19.03.01
 //   Copyright (C) 2019 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -50,7 +50,7 @@ func chat(msg string){
 }
 
 func init() {	
-	mkl.Version("Tricky's Go Units - Jeroen's eXtremely Simplistic Repeatative Character Compression Algorithm.go","19.02.28")
+	mkl.Version("Tricky's Go Units - Jeroen's eXtremely Simplistic Repeatative Character Compression Algorithm.go","19.03.01")
 	mkl.Lic    ("Tricky's Go Units - Jeroen's eXtremely Simplistic Repeatative Character Compression Algorithm.go","ZLib License")
 	//fmt.Println("JXSRCCA installed!")
 	jxsrcca := &jcr6main.TJCR6StorageDriver{}
@@ -58,6 +58,7 @@ func init() {
 	
 	jxsrcca.Pack = func(b []byte)[]byte{
 		ret:= make([]byte,1)
+		ret[0]='J';
 		got:=false
 		char:=byte(0)
 		reap:=byte(0)
@@ -72,7 +73,7 @@ func init() {
 				chat(fmt.Sprintf("Flushing byte %d x %d (total %9d byte)",char,reap,len(ret)))
 			} else if (!got) {
 				char=cbyte;
-				reap=0;
+				reap=1;
 				got=true;
 			} else {
 				reap++
